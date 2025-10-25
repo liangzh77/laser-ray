@@ -453,13 +453,13 @@ class LaserChessUI {
 
         // 椭圆形主体
         ctx.beginPath();
-        ctx.ellipse(0, 0, jumperWidth, jumperHeight, 0, Math.PI * 2);
+        ctx.ellipse(0, 0, jumperWidth, jumperHeight, 0, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
 
         // 内部椭圆
         ctx.beginPath();
-        ctx.ellipse(0, 0, jumperWidth * 0.6, jumperHeight * 0.6, 0, Math.PI * 2);
+        ctx.ellipse(0, 0, jumperWidth * 0.6, jumperHeight * 0.6, 0, 0, Math.PI * 2);
         ctx.stroke();
 
         // 添加跳跃指示器

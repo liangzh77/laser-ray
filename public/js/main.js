@@ -393,16 +393,16 @@ class LaserChessUI {
         // 左上箭头
         ctx.beginPath();
         ctx.moveTo(-splitterSize * 0.6, -splitterSize * 0.6);
-        ctx.lineTo(-splitterSize * 0.6 - 6, -splitter * 0.6 + 4);
-        ctx.lineTo(-splitterSize * 0.6 + 6, -splitter * 0.6 + 4);
+        ctx.lineTo(-splitterSize * 0.6 - 6, -splitterSize * 0.6 + 4);
+        ctx.lineTo(-splitterSize * 0.6 + 6, -splitterSize * 0.6 + 4);
         ctx.closePath();
         ctx.fill();
 
         // 右上箭头
         ctx.beginPath();
         ctx.moveTo(splitterSize * 0.6, -splitterSize * 0.6);
-        ctx.lineTo(splitterSize * 0.6 + 6, -splitter * 0.6 + 4);
-        ctx.lineTo(splitterSize * 0.6 - 6, -splitter * 0.6 + 4);
+        ctx.lineTo(splitterSize * 0.6 + 6, -splitterSize * 0.6 + 4);
+        ctx.lineTo(splitterSize * 0.6 - 6, -splitterSize * 0.6 + 4);
         ctx.closePath();
         ctx.fill();
 

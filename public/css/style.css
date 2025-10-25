@@ -440,21 +440,22 @@ body {
 
 .file-labels {
     position: absolute;
-    bottom: 0rem;
+    bottom: -1.5rem;
     left: 2rem;
-    right: 3rem;
+    right: 0rem;
     display: flex;
     justify-content: space-around;
     font-family: 'Orbitron', monospace;
     font-weight: 600;
     color: var(--board-dark);
     font-size: 1.1rem;
+    padding-right: 3rem;
 }
 
 .rank-labels {
     position: absolute;
     top: 3rem;
-    left: 0rem;
+    left: -1.5rem;
     bottom: 2rem;
     display: flex;
     flex-direction: column;
@@ -463,7 +464,7 @@ body {
     font-weight: 600;
     color: var(--board-dark);
     font-size: 1.1rem;
-    width: 2rem;
+    width: 1.5rem;
     align-items: center;
 }
 

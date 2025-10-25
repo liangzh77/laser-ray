@@ -478,16 +478,16 @@ class LaserChessUI {
         // 跳跃箭头
         ctx.fillStyle = color === 'white' ? '#d97706' : '#d97706';
         ctx.beginPath();
-        ctx.moveTo(-jumperSize - 5, 0);
-        ctx.lineTo(-jumperSize - 2, -5);
-        ctx.lineTo(-jumperSize - 2, 5);
+        ctx.moveTo(-jumperWidth - 5, 0);
+        ctx.lineTo(-jumperWidth - 2, -5);
+        ctx.lineTo(-jumperWidth - 2, 5);
         ctx.closePath();
         ctx.fill();
 
         ctx.beginPath();
-        ctx.moveTo(jumperSize + 5, 0);
-        ctx.lineTo(jumperSize + 2, -5);
-        ctx.lineTo(jumperSize + 2, 5);
+        ctx.moveTo(jumperWidth + 5, 0);
+        ctx.lineTo(jumperWidth + 2, -5);
+        ctx.lineTo(jumperWidth + 2, 5);
         ctx.closePath();
         ctx.fill();
 

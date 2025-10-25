@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>激光棋 - Laser Chess</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 主菜单界面 -->
+    <div id="main-menu" class="screen active">
+        <div class="menu-container">
+            <header class="game-header">
+                <h1 class="game-title">
+                    <span class="laser-icon">⚡</span>
+                    激光棋
+                    <span class="laser-icon">⚡</span>
+                </h1>
+                <p class="game-subtitle">Laser Chess Game</p>
+            </header>
+
+            <main class="menu-content">
+                <div class="game-modes">
+                    <h2>选择游戏模式</h2>
+                    <div class="mode-buttons">
+                        <button class="mode-btn" data-mode="10+0">
+                            <div class="mode-title">快速对局</div>
+                            <div class="mode-time">10+0</div>
+                            <div class="mode-desc">10分钟，无加时</div>
+                        </button>
+                        <button class="mode-btn" data-mode="15+10">
+                            <div class="mode-title">标准对局</div>
+                            <div class="mode-time">15+10</div>
+                            <div class="mode-desc">15分钟，每步+10秒</div>
+                        </button>
+                        <button class="mode-btn" data-mode="unlimited">
+                            <div class="mode-title">休闲对局</div>
+                            <div class="mode-time">无限时间</div>
+                            <div class="mode-desc">无时间限制</div>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="menu-actions">
+                    <button id="start-game-btn" class="primary-btn" disabled>
+                        开始游戏
+                    </button>
+                    <button id="rules-btn" class="secondary-btn">
+                        游戏规则
+                    </button>
+                </div>
+            </main>
+
+            <footer class="menu-footer">
+                <p>双人对战策略游戏 • 使用激光和镜子的智慧对决</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- 游戏界面 -->
+    <div id="game-screen" class="screen">
+        <div class="game-container">
+            <!-- 游戏头部信息栏 -->
+            <header class="game-info-bar">
+                <div class="player-info player-white">
+                    <div class="player-avatar">♔</div>
+                    <div class="player-details">
+                        <div class="player-name">白方</div>
+                        <div class="player-time" id="white-time">10:00</div>
+                    </div>
+                    <div class="player-status" id="white-status">等待中</div>
+                </div>
+
+                <div class="game-status">
+                    <div class="turn-indicator">
+                        <div class="current-turn" id="current-turn">白方回合</div>
+                        <div class="turn-number">第 <span id="turn-count">1</span> 回合</div>
+                    </div>
+                </div>
+
+                <div class="player-info player-black">
+                    <div class="player-status" id="black-status">等待中</div>
+                    <div class="player-details">
+                        <div class="player-name">黑方</div>
+                        <div class="player-time" id="black-time">10:00</div>
+                    </div>
+                    <div class="player-avatar">♚</div>
+                </div>
+            </header>
+
+            <!-- 游戏主区域 -->
+            <main class="game-main">
+                <!-- 左侧控制面板 -->
+                <aside class="control-panel left-panel">
+                    <div class="panel-section">
+                        <h3>游戏操作</h3>
+                        <div class="action-buttons">
+                            <button id="move-btn" class="action-btn" disabled>
+                                <span class="btn-icon">♟</span>
+                                移动棋子
+                            </button>
+                            <button id="rotate-btn" class="action-btn" disabled>
+                                <span class="btn-icon">🔄</span>
+                                旋转棋子
+                            </button>
+                            <button id="fire-laser-btn" class="action-btn" disabled>
+                                <span class="btn-icon">⚡</span>
+                                发射激光
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <h3>选中棋子</h3>
+                        <div id="selected-piece-info" class="piece-info">
+                            <div class="piece-type">未选择</div>
+                            <div class="piece-position">-</div>
+                            <div class="piece-owner">-</div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- 棋盘区域 -->
+                <section class="board-container">
+                    <div class="board-wrapper">
+                        <canvas id="game-board" class="game-board"></canvas>
+                        <div class="board-coordinates">
+                            <div class="file-labels">a b c d e f g</div>
+                            <div class="rank-labels">
+                                <span>7</span><span>6</span><span>5</span>
+                                <span>4</span><span>3</span><span>2</span><span>1</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 右侧信息面板 -->
+                <aside class="control-panel right-panel">
+                    <div class="panel-section">
+                        <h3>游戏信息</h3>
+                        <div class="game-stats">
+                            <div class="stat-item">
+                                <label>游戏模式:</label>
+                                <span id="game-mode">10+0</span>
+                            </div>
+                            <div class="stat-item">
+                                <label>移动次数:</label>
+                                <span id="move-count">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <label>激光发射:</label>
+                                <span id="laser-count">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <h3>棋子图例</h3>
+                        <div class="piece-legend">
+                            <div class="legend-item">
+                                <span class="legend-icon mirror">🪞</span>
+                                <span>镜子</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-icon shield">🛡</span>
+                                <span>盾牌</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-icon turret">⚡</span>
+                                <span>激光炮塔</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-icon jumper">🔀</span>
+                                <span>跳台</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-icon splitter">💎</span>
+                                <span>分光器</span>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </main>
+
+            <!-- 游戏底部控制栏 -->
+            <footer class="game-controls">
+                <button id="pause-btn" class="control-btn">
+                    <span class="btn-icon">⏸</span>
+                    暂停
+                </button>
+                <button id="restart-btn" class="control-btn">
+                    <span class="btn-icon">🔄</span>
+                    重新开始
+                </button>
+                <button id="menu-btn" class="control-btn">
+                    <span class="btn-icon">🏠</span>
+                    返回主菜单
+                </button>
+                <button id="sound-btn" class="control-btn active">
+                    <span class="btn-icon">🔊</span>
+                    音效
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- 游戏结束界面 -->
+    <div id="game-over-screen" class="screen">
+        <div class="game-over-container">
+            <div class="game-over-content">
+                <div class="winner-announcement">
+                    <div class="winner-icon" id="winner-icon">♔</div>
+                    <h2 id="winner-text">白方获胜！</h2>
+                    <p id="win-reason">激光炮塔被摧毁</p>
+                </div>
+
+                <div class="game-stats-summary">
+                    <h3>游戏统计</h3>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-value" id="final-moves">24</div>
+                            <div class="stat-label">总移动数</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="final-time">08:45</div>
+                            <div class="stat-label">游戏时长</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="final-lasers">6</div>
+                            <div class="stat-label">激光发射</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-over-actions">
+                    <button id="play-again-btn" class="primary-btn">
+                        再来一局
+                    </button>
+                    <button id="back-to-menu-btn" class="secondary-btn">
+                        返回主菜单
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 规则说明弹窗 -->
+    <div id="rules-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>游戏规则</h2>
+                <button class="modal-close" id="close-rules">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="rules-section">
+                    <h3>游戏目标</h3>
+                    <p>摧毁对手的激光炮塔或让对手时间耗尽即可获胜。</p>
+                </div>
+
+                <div class="rules-section">
+                    <h3>棋子说明</h3>
+                    <ul class="rules-list">
+                        <li><strong>镜子 🪞</strong>: 从45°角反射激光，从侧面击中会摧毁</li>
+                        <li><strong>盾牌 🛡</strong>: 正面阻挡激光，侧面被击中会摧毁</li>
+                        <li><strong>激光炮塔 ⚡</strong>: 发射激光，被击中即输掉游戏</li>
+                        <li><strong>跳台 🔀</strong>: 让激光跳跃过障碍物</li>
+                        <li><strong>分光器 💎</strong>: 将激光分成两束</li>
+                    </ul>
+                </div>
+
+                <div class="rules-section">
+                    <h3>操作方式</h3>
+                    <ul class="rules-list">
+                        <li>每回合只能执行一个操作：移动、旋转或发射激光</li>
+                        <li>棋子移动遵循国际象棋城堡规则（直线移动）</li>
+                        <li>点击棋子选中，再点击目标位置或操作按钮</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  
+    <script src="js/main.js"></script>
+</body>
+</html>

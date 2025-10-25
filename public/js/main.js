@@ -188,7 +188,32 @@ class LaserChessUI {
         const y = row * cellSize + cellSize / 2;
         const radius = cellSize * 0.35;
 
-        // 绘制棋子背景
+        // 根据棋子类型绘制不同的几何图形
+        switch (type) {
+            case 'turret':
+                this.drawTurret(x, y, radius, color, direction);
+                break;
+            case 'mirror':
+                this.drawMirror(x, y, radius, color, direction);
+                break;
+            case 'shield':
+                this.drawShield(x, y, radius, color, direction);
+                break;
+            case 'splitter':
+                this.drawSplitter(x, y, radius, color, direction);
+                break;
+            case 'jumper':
+                this.drawJumper(x, y, radius, color, direction);
+                break;
+            default:
+                this.drawDefaultPiece(x, y, radius, color);
+        }
+    }
+
+    drawTurret(x, y, radius, color, direction) {
+        const ctx = this.canvasContext;
+
+        // 绘制圆形底座
         ctx.fillStyle = color === 'white' ? '#f8fafc' : '#1e293b';
         ctx.strokeStyle = color === 'white' ? '#1e293b' : '#f8fafc';
         ctx.lineWidth = 3;
@@ -198,139 +223,268 @@ class LaserChessUI {
         ctx.fill();
         ctx.stroke();
 
-        // 绘制方向指示器
-        this.drawDirectionIndicator(x, y, radius, direction, color);
-
-        // 绘制棋子图标
+        // 绘制激光炮塔图标
         ctx.fillStyle = color === 'white' ? '#1e293b' : '#f8fafc';
-        ctx.font = `${cellSize * 0.4}px Arial`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-
-        const icons = {
-            'turret': '⚡',
-            'mirror': '🪞',
-            'shield': '🛡',
-            'splitter': '💎',
-            'jumper': '🔀'
-        };
-
-        ctx.fillText(icons[type] || '?', x, y);
-    }
-
-    drawDirectionIndicator(x, y, radius, direction, color) {
-        const ctx = this.canvasContext;
-        const indicatorRadius = radius * 0.7;
-
-        // 设置方向指示器的颜色
-        ctx.strokeStyle = color === 'white' ? '#2563eb' : '#dc2626';
-        ctx.fillStyle = color === 'white' ? '#2563eb' : '#dc2626';
+        ctx.strokeStyle = color === 'white' ? '#1e293b' : '#f8fafc';
         ctx.lineWidth = 2;
+
+        // 炮塔主体
+        const baseSize = radius * 0.6;
+        ctx.beginPath();
+        ctx.arc(x, y, baseSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 炮管
+        const barrelLength = radius * 0.8;
+        const barrelWidth = radius * 0.15;
 
         ctx.save();
         ctx.translate(x, y);
+        this.rotateForDirection(ctx, direction);
 
-        // 根据方向绘制指示器
-        switch (direction) {
-            case 'up':
-                ctx.beginPath();
-                ctx.moveTo(0, -indicatorRadius);
-                ctx.lineTo(-5, -indicatorRadius + 10);
-                ctx.lineTo(5, -indicatorRadius + 10);
-                ctx.closePath();
-                ctx.fill();
-                break;
-            case 'down':
-                ctx.beginPath();
-                ctx.moveTo(0, indicatorRadius);
-                ctx.lineTo(-5, indicatorRadius - 10);
-                ctx.lineTo(5, indicatorRadius - 10);
-                ctx.closePath();
-                ctx.fill();
-                break;
-            case 'left':
-                ctx.beginPath();
-                ctx.moveTo(-indicatorRadius, 0);
-                ctx.lineTo(-indicatorRadius + 10, -5);
-                ctx.lineTo(-indicatorRadius + 10, 5);
-                ctx.closePath();
-                ctx.fill();
-                break;
-            case 'right':
-                ctx.beginPath();
-                ctx.moveTo(indicatorRadius, 0);
-                ctx.lineTo(indicatorRadius - 10, -5);
-                ctx.lineTo(indicatorRadius - 10, 5);
-                ctx.closePath();
-                ctx.fill();
-                break;
-            case 'up-right':
-                ctx.beginPath();
-                ctx.moveTo(indicatorRadius * 0.7, -indicatorRadius * 0.7);
-                ctx.lineTo(indicatorRadius * 0.7 - 5, -indicatorRadius * 0.7 + 5);
-                ctx.lineTo(indicatorRadius * 0.7 + 5, -indicatorRadius * 0.7 + 5);
-                ctx.closePath();
-                ctx.fill();
-                break;
-            case 'up-left':
-                ctx.beginPath();
-                ctx.moveTo(-indicatorRadius * 0.7, -indicatorRadius * 0.7);
-                ctx.lineTo(-indicatorRadius * 0.7 + 5, -indicatorRadius * 0.7 + 5);
-                ctx.lineTo(-indicatorRadius * 0.7 - 5, -indicatorRadius * 0.7 + 5);
-                ctx.closePath();
-                ctx.fill();
-                break;
-            case 'down-right':
-                ctx.beginPath();
-                ctx.moveTo(indicatorRadius * 0.7, indicatorRadius * 0.7);
-                ctx.lineTo(indicatorRadius * 0.7 - 5, indicatorRadius * 0.7 - 5);
-                ctx.lineTo(indicatorRadius * 0.7 + 5, indicatorRadius * 0.7 - 5);
-                ctx.closePath();
-                ctx.fill();
-                break;
-            case 'down-left':
-                ctx.beginPath();
-                ctx.moveTo(-indicatorRadius * 0.7, indicatorRadius * 0.7);
-                ctx.lineTo(-indicatorRadius * 0.7 + 5, indicatorRadius * 0.7 - 5);
-                ctx.lineTo(-indicatorRadius * 0.7 - 5, indicatorRadius * 0.7 - 5);
-                ctx.closePath();
-                ctx.fill();
-                break;
-            case 'vertical':
-                // 竖直方向的双向箭头
-                ctx.beginPath();
-                ctx.moveTo(0, -indicatorRadius);
-                ctx.lineTo(-5, -indicatorRadius + 8);
-                ctx.lineTo(5, -indicatorRadius + 8);
-                ctx.closePath();
-                ctx.fill();
-                ctx.beginPath();
-                ctx.moveTo(0, indicatorRadius);
-                ctx.lineTo(-5, indicatorRadius - 8);
-                ctx.lineTo(5, indicatorRadius - 8);
-                ctx.closePath();
-                ctx.fill();
-                break;
-            case 'horizontal':
-                // 水平方向的双向箭头
-                ctx.beginPath();
-                ctx.moveTo(-indicatorRadius, 0);
-                ctx.lineTo(-indicatorRadius + 8, -5);
-                ctx.lineTo(-indicatorRadius + 8, 5);
-                ctx.closePath();
-                ctx.fill();
-                ctx.beginPath();
-                ctx.moveTo(indicatorRadius, 0);
-                ctx.lineTo(indicatorRadius - 8, -5);
-                ctx.lineTo(indicatorRadius - 8, 5);
-                ctx.closePath();
-                ctx.fill();
-                break;
-        }
+        ctx.beginPath();
+        ctx.moveTo(0, -baseSize);
+        ctx.lineTo(-barrelWidth/2, -baseSize - barrelLength);
+        ctx.lineTo(barrelWidth/2, -baseSize - barrelLength);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.restore();
+
+        // 中心发光点
+        ctx.fillStyle = color === 'white' ? '#dc2626' : '#dc2626';
+        ctx.beginPath();
+        ctx.arc(x, y, radius * 0.15, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    drawMirror(x, y, radius, color, direction) {
+        const ctx = this.canvasContext;
+
+        // 绘制底座
+        ctx.fillStyle = color === 'white' ? '#f8fafc' : '#1e293b';
+        ctx.strokeStyle = color === 'white' ? '#1e293b' : '#f8fafc';
+        ctx.lineWidth = 3;
+
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // 绘制镜子（45度角的对角线）
+        ctx.fillStyle = color === 'white' ? '#60a5fa' : '#60a5fa';
+        ctx.strokeStyle = color === 'white' ? '#1e40af' : '#1e40af';
+        ctx.lineWidth = 2;
+
+        const mirrorSize = radius * 0.7;
+
+        ctx.save();
+        ctx.translate(x, y);
+        this.rotateForDirection(ctx, direction);
+
+        ctx.beginPath();
+        ctx.moveTo(-mirrorSize/2, -mirrorSize/2);
+        ctx.lineTo(mirrorSize/2, mirrorSize/2);
+        ctx.lineTo(mirrorSize/2 + 4, mirrorSize/2);
+        ctx.lineTo(mirrorSize/2, mirrorSize/2 - 4);
+        ctx.lineTo(mirrorSize/2, mirrorSize/2);
+        ctx.lineTo(-mirrorSize/2, -mirrorSize/2);
+        ctx.lineTo(-mirrorSize/2, -mirrorSize/2 - 4);
+        ctx.lineTo(-mirrorSize/2 + 4, -mirrorSize/2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
 
         ctx.restore();
     }
 
+    drawShield(x, y, radius, color, direction) {
+        const ctx = this.canvasContext;
+
+        // 绘制底座
+        ctx.fillStyle = color === 'white' ? '#f8fafc' : '#1e293b';
+        ctx.strokeStyle = color === 'white' ? '#1e293b' : '#f8fafc';
+        ctx.lineWidth = 3;
+
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // 绘制盾牌（带弧度的六边形）
+        ctx.fillStyle = color === 'white' ? '#10b981' : '#10b981';
+        ctx.strokeStyle = color === 'white' ? '#059669' : '#059669';
+        ctx.lineWidth = 2;
+
+        const shieldSize = radius * 0.7;
+
+        ctx.save();
+        ctx.translate(x, y);
+        this.rotateForDirection(ctx, direction);
+
+        ctx.beginPath();
+        ctx.moveTo(0, -shieldSize);
+        ctx.lineTo(-shieldSize * 0.8, -shieldSize * 0.3);
+        ctx.lineTo(-shieldSize * 0.8, shieldSize * 0.3);
+        ctx.lineTo(0, shieldSize);
+        ctx.lineTo(shieldSize * 0.8, shieldSize * 0.3);
+        ctx.lineTo(shieldSize * 0.8, -shieldSize * 0.3);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // 添加盾牌中央装饰
+        ctx.fillStyle = color === 'white' ? '#059669' : '#059669';
+        ctx.beginPath();
+        ctx.arc(0, 0, shieldSize * 0.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    drawSplitter(x, y, radius, color, direction) {
+        const ctx = this.canvasContext;
+
+        // 绘制底座
+        ctx.fillStyle = color === 'white' ? '#f8fafc' : '#1e293b';
+        ctx.strokeStyle = color === 'white' ? '#1e293b' : '#f8fafc';
+        ctx.lineWidth = 3;
+
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // 绘制分光器（钻石形状）
+        ctx.fillStyle = color === 'white' ? '#a855f7' : '#a855f7';
+        ctx.strokeStyle = color === 'white' ? '#7c3aed' : '#7c3aed';
+        ctx.lineWidth = 2;
+
+        const splitterSize = radius * 0.6;
+
+        ctx.save();
+        ctx.translate(x, y);
+        this.rotateForDirection(ctx, direction);
+
+        ctx.beginPath();
+        ctx.moveTo(0, -splitterSize);
+        ctx.lineTo(-splitterSize * 0.7, 0);
+        ctx.lineTo(0, splitterSize);
+        ctx.lineTo(splitterSize * 0.7, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // 添加分光线条
+        ctx.strokeStyle = color === 'white' ? '#7c3aed' : '#7c3aed';
+        ctx.lineWidth = 1;
+
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-splitterSize * 0.5, -splitterSize * 0.5);
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-splitterSize * 0.5, splitterSize * 0.5);
+        ctx.moveTo(0, 0);
+        ctx.lineTo(splitterSize * 0.5, -splitterSize * 0.5);
+        ctx.moveTo(0, 0);
+        ctx.lineTo(splitterSize * 0.5, splitterSize * 0.5);
+        ctx.stroke();
+
+        ctx.restore();
+    }
+
+    drawJumper(x, y, radius, color, direction) {
+        const ctx = this.canvasContext;
+
+        // 绘制底座
+        ctx.fillStyle = color === 'white' ? '#f8fafc' : '#1e293b';
+        ctx.strokeStyle = color === 'white' ? '#1e293b' : '#f8fafc';
+        ctx.lineWidth = 3;
+
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // 绘制跳台（带箭头的圆环）
+        ctx.fillStyle = color === 'white' ? '#f59e0b' : '#f59e0b';
+        ctx.strokeStyle = color === 'white' ? '#d97706' : '#d97706';
+        ctx.lineWidth = 2;
+
+        const jumperSize = radius * 0.8;
+
+        ctx.save();
+        ctx.translate(x, y);
+        this.rotateForDirection(ctx, direction);
+
+        // 外环
+        ctx.beginPath();
+        ctx.arc(0, 0, jumperSize, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // 内环
+        ctx.beginPath();
+        ctx.arc(0, 0, jumperSize * 0.6, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // 跳跃箭头
+        ctx.fillStyle = color === 'white' ? '#d97706' : '#d97706';
+        ctx.beginPath();
+        ctx.moveTo(0, -jumperSize - 5);
+        ctx.lineTo(-5, -jumperSize + 2);
+        ctx.lineTo(5, -jumperSize + 2);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(0, jumperSize + 5);
+        ctx.lineTo(-5, jumperSize - 2);
+        ctx.lineTo(5, jumperSize - 2);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    drawDefaultPiece(x, y, radius, color) {
+        // 默认棋子样式
+        const ctx = this.canvasContext;
+
+        ctx.fillStyle = color === 'white' ? '#f8fafc' : '#1e293b';
+        ctx.strokeStyle = color === 'white' ? '#1e293b' : '#f8fafc';
+        ctx.lineWidth = 3;
+
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = color === 'white' ? '#1e293b' : '#f8fafc';
+        ctx.font = `${radius * 0.8}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('?', x, y);
+    }
+
+    rotateForDirection(ctx, direction) {
+        // 根据方向旋转画布
+        const rotations = {
+            'up': 0,
+            'down': 180,
+            'left': 270,
+            'right': 90,
+            'up-right': 45,
+            'up-left': 315,
+            'down-right': 135,
+            'down-left': 225,
+            'vertical': 0,
+            'horizontal': 90
+        };
+
+        ctx.rotate((rotations[direction] || 0) * Math.PI / 180);
+    }
+
+    
     enableActionButtons() {
         document.querySelectorAll('.action-btn').forEach(btn => {
             btn.disabled = false;

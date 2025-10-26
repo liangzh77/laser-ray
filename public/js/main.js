@@ -213,7 +213,7 @@ class LaserChessUI {
     drawTurret(x, y, radius, color, direction) {
         const ctx = this.canvasContext;
 
-        // 绘制圆形底座
+        // 绘制底座
         ctx.fillStyle = color === 'white' ? '#f8fafc' : '#1e293b';
         ctx.strokeStyle = color === 'white' ? '#1e293b' : '#f8fafc';
         ctx.lineWidth = 3;
@@ -223,38 +223,76 @@ class LaserChessUI {
         ctx.fill();
         ctx.stroke();
 
-        // 绘制激光炮塔图标
-        ctx.fillStyle = color === 'white' ? '#1e293b' : '#f8fafc';
-        ctx.strokeStyle = color === 'white' ? '#1e293b' : '#f8fafc';
-        ctx.lineWidth = 2;
-
-        // 炮塔主体
-        const baseSize = radius * 0.6;
-        ctx.beginPath();
-        ctx.arc(x, y, baseSize, 0, Math.PI * 2);
-        ctx.fill();
-
-        // 炮管
-        const barrelLength = radius * 0.8;
-        const barrelWidth = radius * 0.15;
-
+        // 绘制激光炮塔（方形基座 + 突出炮口设计）
         ctx.save();
         ctx.translate(x, y);
         this.rotateForDirection(ctx, direction);
 
+        const baseSize = radius * 0.7;
+        const barrelLength = radius * 0.9;
+        const barrelWidth = radius * 0.2;
+
+        // 绘制方形基座
+        ctx.fillStyle = color === 'white' ? '#374151' : '#374151';
+        ctx.strokeStyle = color === 'white' ? '#111827' : '#111827';
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(0, -baseSize);
-        ctx.lineTo(-barrelWidth/2, -baseSize - barrelLength);
-        ctx.lineTo(barrelWidth/2, -baseSize - barrelLength);
+        ctx.rect(-baseSize, -baseSize, baseSize * 2, baseSize * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // 添加基座细节
+        ctx.strokeStyle = color === 'white' ? '#6b7280' : '#6b7280';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.rect(-baseSize + 4, -baseSize + 4, baseSize * 2 - 8, baseSize * 2 - 8);
+        ctx.stroke();
+
+        // 绘制突出炮口（更明显、更突出）
+        ctx.fillStyle = color === 'white' ? '#1f2937' : '#1f2937';
+        ctx.strokeStyle = color === 'white' ? '#111827' : '#111827';
+        ctx.lineWidth = 2;
+
+        ctx.beginPath();
+        // 炮口基部（更宽）
+        ctx.moveTo(-barrelWidth * 0.8, -baseSize);
+        ctx.lineTo(-barrelWidth * 0.6, -baseSize - barrelLength * 0.3);
+        ctx.lineTo(barrelWidth * 0.6, -baseSize - barrelLength * 0.3);
+        ctx.lineTo(barrelWidth * 0.8, -baseSize);
         ctx.closePath();
         ctx.fill();
+        ctx.stroke();
+
+        // 炮口尖端（更突出）
+        ctx.beginPath();
+        ctx.moveTo(-barrelWidth * 0.6, -baseSize - barrelLength * 0.3);
+        ctx.lineTo(-barrelWidth * 0.4, -baseSize - barrelLength);
+        ctx.lineTo(0, -baseSize - barrelLength * 1.2); // 尖端更突出
+        ctx.lineTo(barrelWidth * 0.4, -baseSize - barrelLength);
+        ctx.lineTo(barrelWidth * 0.6, -baseSize - barrelLength * 0.3);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // 添加炮口发光效果
+        ctx.fillStyle = color === 'white' ? '#ef4444' : '#ef4444';
+        ctx.beginPath();
+        ctx.arc(0, -baseSize - barrelLength * 1.2, barrelWidth * 0.3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 添加能量指示器
+        ctx.strokeStyle = color === 'white' ? '#fbbf24' : '#fbbf24';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(0, 0, baseSize + 6, 0, Math.PI * 2);
+        ctx.stroke();
 
         ctx.restore();
 
-        // 中心发光点
+        // 中心发光核心
         ctx.fillStyle = color === 'white' ? '#dc2626' : '#dc2626';
         ctx.beginPath();
-        ctx.arc(x, y, radius * 0.15, 0, Math.PI * 2);
+        ctx.arc(x, y, radius * 0.12, 0, Math.PI * 2);
         ctx.fill();
     }
 
@@ -271,27 +309,44 @@ class LaserChessUI {
         ctx.fill();
         ctx.stroke();
 
-        // 绘制镜子（45度摆放的矩形镜面）
-        ctx.fillStyle = color === 'white' ? '#60a5fa' : '#60a5fa';
-        ctx.strokeStyle = color === 'white' ? '#1e40af' : '#1e40af';
-        ctx.lineWidth = 2;
-
-        const mirrorSize = radius * 0.8;
-        const mirrorWidth = radius * 0.6;
-
+        // 绘制镜子（改进的45度镜面设计）
         ctx.save();
         ctx.translate(x, y);
         this.rotateForDirection(ctx, direction);
 
-        // 绘制45度倾斜的矩形镜面
+        const mirrorLength = radius * 1.2; // 镜面长度，从左上到右下
+        const mirrorThickness = radius * 0.15; // 镜面厚度
+
+        // 绘制镜面背面（弧形）
+        ctx.fillStyle = color === 'white' ? '#3b82f6' : '#3b82f6';
+        ctx.strokeStyle = color === 'white' ? '#1e40af' : '#1e40af';
+        ctx.lineWidth = 2;
+
         ctx.beginPath();
-        ctx.rect(-mirrorWidth/2, -mirrorSize/2, mirrorWidth, mirrorSize);
+        // 创建弧形背面（稍微弯曲的镜面）
+        ctx.moveTo(-mirrorLength/2, -mirrorLength/2);
+        ctx.quadraticCurveTo(0, -mirrorLength/2 - mirrorThickness, mirrorLength/2, mirrorLength/2);
+        ctx.lineTo(mirrorLength/2 - mirrorThickness/2, mirrorLength/2 - mirrorThickness/2);
+        ctx.quadraticCurveTo(0, 0, -mirrorLength/2 + mirrorThickness/2, -mirrorLength/2 + mirrorThickness/2);
+        ctx.closePath();
         ctx.fill();
         ctx.stroke();
 
-        // 添加镜面反光效果
-        ctx.fillStyle = color === 'white' ? '#93c5fd' : '#93c5fd';
-        ctx.fillRect(-mirrorWidth/2, -mirrorSize/2 + 2, mirrorWidth, 4);
+        // 绘制镜面正面（平的亮色边缘）
+        ctx.strokeStyle = color === 'white' ? '#60a5fa' : '#60a5fa';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(-mirrorLength/2, -mirrorLength/2);
+        ctx.lineTo(mirrorLength/2, mirrorLength/2);
+        ctx.stroke();
+
+        // 添加镜面高光效果
+        ctx.strokeStyle = color === 'white' ? '#93c5fd' : '#93c5fd';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(-mirrorLength/2 + 4, -mirrorLength/2 + 4);
+        ctx.lineTo(mirrorLength/2 - 8, mirrorLength/2 - 8);
+        ctx.stroke();
 
         ctx.restore();
     }
@@ -309,42 +364,54 @@ class LaserChessUI {
         ctx.fill();
         ctx.stroke();
 
-        // 绘制盾牌（扁椭圆形）
+        // 绘制盾牌（改进的弧形设计，水平中心线对称）
         ctx.fillStyle = color === 'white' ? '#10b981' : '#10b981';
         ctx.strokeStyle = color === 'white' ? '#059669' : '#059669';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 3;
 
-        const shieldWidth = radius * 0.9;
-        const shieldHeight = radius * 0.5;
+        const shieldWidth = radius * 1.0;
+        const shieldHeight = radius * 0.55;
 
         ctx.save();
         ctx.translate(x, y);
         this.rotateForDirection(ctx, direction);
 
+        // 绘制盾牌主体（弧形表面，两侧尖锐）
         ctx.beginPath();
+        // 左上弧形
         ctx.moveTo(0, -shieldHeight);
-        ctx.lineTo(-shieldWidth * 0.9, -shieldHeight * 0.2);
-        ctx.lineTo(-shieldWidth * 0.9, shieldHeight * 0.2);
-        ctx.lineTo(0, shieldHeight);
-        ctx.lineTo(shieldWidth * 0.9, shieldHeight * 0.2);
-        ctx.lineTo(shieldWidth * 0.9, -shieldHeight * 0.2);
+        ctx.quadraticCurveTo(-shieldWidth * 0.7, -shieldHeight * 0.8, -shieldWidth, 0);
+        // 左下弧形
+        ctx.quadraticCurveTo(-shieldWidth * 0.7, shieldHeight * 0.8, 0, shieldHeight);
+        // 右下弧形
+        ctx.quadraticCurveTo(shieldWidth * 0.7, shieldHeight * 0.8, shieldWidth, 0);
+        // 右上弧形
+        ctx.quadraticCurveTo(shieldWidth * 0.7, -shieldHeight * 0.8, 0, -shieldHeight);
         ctx.closePath();
         ctx.fill();
         ctx.stroke();
 
-        // 添加盾牌中央装饰线
+        // 添加盾牌中央弧形装饰线（强调对称性）
         ctx.strokeStyle = color === 'white' ? '#059669' : '#059669';
-        ctx.lineWidth = 1;
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(-shieldWidth * 0.4, 0);
-        ctx.lineTo(shieldWidth * 0.4, 0);
+        ctx.moveTo(-shieldWidth * 0.3, -shieldHeight * 0.3);
+        ctx.quadraticCurveTo(0, -shieldHeight * 0.5, shieldWidth * 0.3, -shieldHeight * 0.3);
         ctx.stroke();
 
-        // 添加盾牌中央圆点
-        ctx.fillStyle = color === 'white' ? '#059669' : '#059669';
         ctx.beginPath();
-        ctx.arc(0, 0, radius * 0.12, 0, Math.PI * 2);
+        ctx.moveTo(-shieldWidth * 0.3, shieldHeight * 0.3);
+        ctx.quadraticCurveTo(0, shieldHeight * 0.5, shieldWidth * 0.3, shieldHeight * 0.3);
+        ctx.stroke();
+
+        // 添加盾牌中央强化圆点
+        ctx.fillStyle = color === 'white' ? '#047857' : '#047857';
+        ctx.strokeStyle = color === 'white' ? '#065f46' : '#065f46';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(0, 0, radius * 0.15, 0, Math.PI * 2);
         ctx.fill();
+        ctx.stroke();
 
         ctx.restore();
     }
@@ -362,66 +429,93 @@ class LaserChessUI {
         ctx.fill();
         ctx.stroke();
 
-        // 绘制分光器（圆形底座 + 三向箭头）
-        ctx.fillStyle = color === 'white' ? '#a855f7' : '#a855f7';
-        ctx.strokeStyle = color === 'white' ? '#7c3aed' : '#7c3aed';
-        ctx.lineWidth = 2;
-
-        const splitterSize = radius * 0.8;
-
+        // 绘制分光器（改进的三向箭头设计）
         ctx.save();
         ctx.translate(x, y);
         this.rotateForDirection(ctx, direction);
 
-        // 绘制中心圆形
+        const splitterSize = radius * 0.8;
+        const arrowLength = splitterSize * 0.7;
+        const arrowWidth = 8;
+
+        // 绘制中心圆形（分光器核心）
+        ctx.fillStyle = color === 'white' ? '#a855f7' : '#a855f7';
+        ctx.strokeStyle = color === 'white' ? '#7c3aed' : '#7c3aed';
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.arc(0, 0, splitterSize * 0.4, 0, Math.PI * 2);
+        ctx.arc(0, 0, splitterSize * 0.3, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
 
-        // 绘制三个向上的箭头（朝上、朝左、朝右）
+        // 绘制三个主要方向的箭头（上、左、右）
         ctx.fillStyle = color === 'white' ? '#7c3aed' : '#7c3aed';
+        ctx.strokeStyle = color === 'white' ? '#6d28d9' : '#6d28d9';
+        ctx.lineWidth = 2;
 
         // 向上箭头
-        ctx.beginPath();
-        ctx.moveTo(0, -splitterSize * 0.7);
-        ctx.lineTo(-4, -splitterSize * 0.7 + 8);
-        ctx.lineTo(4, -splitterSize * 0.7 + 8);
-        ctx.closePath();
-        ctx.fill();
+        this.drawArrow(ctx, 0, -splitterSize * 0.3, 0, -arrowLength, arrowWidth);
 
-        // 左上箭头
-        ctx.beginPath();
-        ctx.moveTo(-splitterSize * 0.6, -splitterSize * 0.6);
-        ctx.lineTo(-splitterSize * 0.6 - 6, -splitterSize * 0.6 + 4);
-        ctx.lineTo(-splitterSize * 0.6 + 6, -splitterSize * 0.6 + 4);
-        ctx.closePath();
-        ctx.fill();
+        // 向左箭头
+        this.drawArrow(ctx, -splitterSize * 0.3, 0, -arrowLength, 0, arrowWidth);
 
-        // 右上箭头
-        ctx.beginPath();
-        ctx.moveTo(splitterSize * 0.6, -splitterSize * 0.6);
-        ctx.lineTo(splitterSize * 0.6 + 6, -splitterSize * 0.6 + 4);
-        ctx.lineTo(splitterSize * 0.6 - 6, -splitterSize * 0.6 + 4);
-        ctx.closePath();
-        ctx.fill();
+        // 向右箭头
+        this.drawArrow(ctx, splitterSize * 0.3, 0, arrowLength, 0, arrowWidth);
 
-        // 添加分光效果线条
-        ctx.strokeStyle = color === 'white' ? '#7c3aed' : '#7c3aed';
+        // 添加分光效果光晕
+        ctx.strokeStyle = color === 'white' ? '#a855f7' : '#a855f7';
         ctx.lineWidth = 1;
-        ctx.setLineDash([2, 2]);
+        ctx.setLineDash([3, 2]);
 
-        // 三条分光线
+        // 三条分光线（更明显）
         ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(0, -splitterSize);
-        ctx.moveTo(0, 0);
-        ctx.lineTo(-splitterSize * 0.8, -splitterSize * 0.8);
-        ctx.moveTo(0, 0);
-        ctx.lineTo(splitterSize * 0.8, -splitterSize * 0.8);
+        ctx.moveTo(0, -splitterSize * 0.3);
+        ctx.lineTo(0, -splitterSize * 1.1);
+        ctx.moveTo(-splitterSize * 0.3, 0);
+        ctx.lineTo(-splitterSize * 1.1, 0);
+        ctx.moveTo(splitterSize * 0.3, 0);
+        ctx.lineTo(splitterSize * 1.1, 0);
         ctx.stroke();
 
         ctx.setLineDash([]);
+
+        // 添加能量光点
+        ctx.fillStyle = color === 'white' ? '#e9d5ff' : '#e9d5ff';
+        const glowPositions = [
+            {x: 0, y: -arrowLength},
+            {x: -arrowLength, y: 0},
+            {x: arrowLength, y: 0}
+        ];
+        glowPositions.forEach(pos => {
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, 3, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        ctx.restore();
+    }
+
+    // 辅助方法：绘制箭头
+    drawArrow(ctx, fromX, fromY, toX, toY, arrowWidth) {
+        const angle = Math.atan2(toY - fromY, toX - fromX);
+        const arrowLength = Math.sqrt((toX - fromX) ** 2 + (toY - fromY) ** 2);
+
+        ctx.save();
+        ctx.translate(fromX, fromY);
+        ctx.rotate(angle);
+
+        // 绘制箭头主体线
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(arrowLength, 0);
+        ctx.stroke();
+
+        // 绘制箭头头部
+        ctx.beginPath();
+        ctx.moveTo(arrowLength, 0);
+        ctx.lineTo(arrowLength - arrowWidth, -arrowWidth/2);
+        ctx.lineTo(arrowLength - arrowWidth, arrowWidth/2);
+        ctx.closePath();
+        ctx.fill();
 
         ctx.restore();
     }
@@ -439,57 +533,83 @@ class LaserChessUI {
         ctx.fill();
         ctx.stroke();
 
-        // 绘制跳台（椭圆形）
-        ctx.fillStyle = color === 'white' ? '#f59e0b' : '#f59e0b';
-        ctx.strokeStyle = color === 'white' ? '#d97706' : '#d97706';
-        ctx.lineWidth = 2;
-
-        const jumperWidth = radius * 0.9;
-        const jumperHeight = radius * 0.5;
-
+        // 绘制跳台（改进的椭圆主体 + 双向箭头设计）
         ctx.save();
         ctx.translate(x, y);
         this.rotateForDirection(ctx, direction);
 
-        // 椭圆形主体
+        const jumperWidth = radius * 0.85;
+        const jumperHeight = radius * 0.45;
+
+        // 绘制椭圆主体（更优雅的形状）
+        ctx.fillStyle = color === 'white' ? '#f59e0b' : '#f59e0b';
+        ctx.strokeStyle = color === 'white' ? '#d97706' : '#d97706';
+        ctx.lineWidth = 3;
+
         ctx.beginPath();
         ctx.ellipse(0, 0, jumperWidth, jumperHeight, 0, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
 
-        // 内部椭圆
+        // 添加内部椭圆环（增加层次感）
+        ctx.strokeStyle = color === 'white' ? '#fbbf24' : '#fbbf24';
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.ellipse(0, 0, jumperWidth * 0.6, jumperHeight * 0.6, 0, 0, Math.PI * 2);
+        ctx.ellipse(0, 0, jumperWidth * 0.7, jumperHeight * 0.7, 0, 0, Math.PI * 2);
         ctx.stroke();
 
-        // 添加跳跃指示器
-        ctx.strokeStyle = color === 'white' ? '#d97706' : '#d97706';
-        ctx.lineWidth = 2;
-        ctx.setLineDash([3, 3]);
-
-        // 水平跳跃线
+        // 添加中心核心
+        ctx.fillStyle = color === 'white' ? '#f97316' : '#f97316';
         ctx.beginPath();
-        ctx.moveTo(-jumperWidth, 0);
-        ctx.lineTo(jumperWidth, 0);
+        ctx.ellipse(0, 0, jumperWidth * 0.3, jumperHeight * 0.3, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 绘制左侧双向箭头（指向左和右）
+        ctx.fillStyle = color === 'white' ? '#d97706' : '#d97706';
+        ctx.strokeStyle = color === 'white' ? '#92400e' : '#92400e';
+        ctx.lineWidth = 2;
+
+        // 左侧向外箭头
+        this.drawArrow(ctx, -jumperWidth * 0.7, 0, -jumperWidth * 1.3, 0, 6);
+        // 左侧向内箭头
+        this.drawArrow(ctx, -jumperWidth * 1.3, 0, -jumperWidth * 0.7, 0, 6);
+
+        // 绘制右侧双向箭头（指向右和左）
+        // 右侧向外箭头
+        this.drawArrow(ctx, jumperWidth * 0.7, 0, jumperWidth * 1.3, 0, 6);
+        // 右侧向内箭头
+        this.drawArrow(ctx, jumperWidth * 1.3, 0, jumperWidth * 0.7, 0, 6);
+
+        // 添加跳跃轨迹线
+        ctx.strokeStyle = color === 'white' ? '#fbbf24' : '#fbbf24';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 3]);
+
+        // 左侧跳跃轨迹
+        ctx.beginPath();
+        ctx.moveTo(-jumperWidth * 1.4, 0);
+        ctx.lineTo(-jumperWidth * 2.0, 0);
+        ctx.stroke();
+
+        // 右侧跳跃轨迹
+        ctx.beginPath();
+        ctx.moveTo(jumperWidth * 1.4, 0);
+        ctx.lineTo(jumperWidth * 2.0, 0);
         ctx.stroke();
 
         ctx.setLineDash([]);
 
-        // 跳跃箭头
-        ctx.fillStyle = color === 'white' ? '#d97706' : '#d97706';
-        ctx.beginPath();
-        ctx.moveTo(-jumperWidth - 5, 0);
-        ctx.lineTo(-jumperWidth - 2, -5);
-        ctx.lineTo(-jumperWidth - 2, 5);
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.moveTo(jumperWidth + 5, 0);
-        ctx.lineTo(jumperWidth + 2, -5);
-        ctx.lineTo(jumperWidth + 2, 5);
-        ctx.closePath();
-        ctx.fill();
+        // 添加跳跃能量光点
+        ctx.fillStyle = color === 'white' ? '#fef3c7' : '#fef3c7';
+        const glowPoints = [
+            {x: -jumperWidth * 1.8, y: 0},
+            {x: jumperWidth * 1.8, y: 0}
+        ];
+        glowPoints.forEach(point => {
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
+            ctx.fill();
+        });
 
         ctx.restore();
     }

@@ -107,24 +107,29 @@ description: "Task list for laser chess game implementation"
 
 ### Tests (US3)
 - [ ] T052 [US3] Create unit tests for laser reflection in tests/unit/engines/PhysicsEngine.test.js
-- [ ] T053 [US3] Create unit tests for laser blocking in tests/unit/engines/PhysicsEngine.test.js
-- [ ] T054 [US3] Create unit tests for laser jumping in tests/unit/engines/PhysicsEngine.test.js
-- [ ] T055 [US3] Create unit tests for laser splitting in tests/unit/engines/PhysicsEngine.test.js
-- [ ] T056 [US3] Create integration tests for laser physics in tests/integration/physics/laser-interactions.test.js
-- [ ] T057 [US3] Create e2e tests for laser scenarios in tests/e2e/user-journey/laser-physics.test.js
+- [ ] T053 [US3] Create unit tests for shield blocking from front and back in tests/unit/engines/PhysicsEngine.test.js
+- [ ] T054 [US3] Create unit tests for jumper jumping from front and back in tests/unit/engines/PhysicsEngine.test.js
+- [ ] T055 [US3] Create unit tests for jumper destruction from sides in tests/unit/engines/PhysicsEngine.test.js
+- [ ] T056 [US3] Create unit tests for splitter splitting from front and sides in tests/unit/engines/PhysicsEngine.test.js
+- [ ] T057 [US3] Create unit tests for splitter destruction from back in tests/unit/engines/PhysicsEngine.test.js
+- [ ] T058 [US3] Create integration tests for updated laser physics in tests/integration/physics/laser-interactions.test.js
+- [ ] T059 [US3] Create e2e tests for new laser scenarios in tests/e2e/user-journey/laser-physics.test.js
 
 ### Implementation Tasks (US3)
-- [ ] T058 [US3] Implement laser path calculation in PhysicsEngine.calculateLaserPath()
-- [ ] T059 [P] [US3] Implement mirror reflection logic in PhysicsEngine.calculateReflection()
-- [ ] T060 [P] [US3] Implement shield blocking logic in PhysicsEngine.calculateBlock()
-- [ ] T061 [P] [US3] Implement turret destruction logic in PhysicsEngine.calculateTurretHit()
-- [ ] T062 [P] [US3] Implement jumper logic in PhysicsEngine.calculateJump()
-- [ ] T063 [P] [US3] Implement splitter logic in PhysicsEngine.calculateSplit()
-- [ ] T064 [US3] Implement laser interaction validation in PhysicsEngine.validateInteraction()
-- [ ] T065 [P] [US3] Create laser rendering in BoardRenderer
-- [ ] T066 [US3] Implement laser animation in AnimationEngine
-- [ ] T067 [US3] Implement piece destruction effects in AnimationEngine
-- [ ] T068 [US3] Create piece-specific interaction classes (Mirror, Shield, Turret, Jumper, Splitter)
+- [ ] T060 [US3] Implement laser path calculation in PhysicsEngine.calculateLaserPath()
+- [ ] T061 [P] [US3] Implement mirror reflection logic in PhysicsEngine.calculateReflection()
+- [ ] T062 [P] [US3] Implement shield blocking from front and back in PhysicsEngine.calculateBlock()
+- [ ] T063 [P] [US3] Implement shield destruction from sides in PhysicsEngine.calculateShieldDestruction()
+- [ ] T064 [P] [US3] Implement turret destruction logic in PhysicsEngine.calculateTurretHit()
+- [ ] T065 [P] [US3] Implement jumper jumping from front and back in PhysicsEngine.calculateJump()
+- [ ] T066 [P] [US3] Implement jumper destruction from sides in PhysicsEngine.calculateJumperDestruction()
+- [ ] T067 [P] [US3] Implement splitter splitting from front and sides in PhysicsEngine.calculateSplit()
+- [ ] T068 [P] [US3] Implement splitter destruction from back in PhysicsEngine.calculateSplitterDestruction()
+- [ ] T069 [US3] Implement laser interaction validation in PhysicsEngine.validateInteraction()
+- [ ] T070 [P] [US3] Create laser rendering in BoardRenderer
+- [ ] T071 [US3] Implement laser animation in AnimationEngine
+- [ ] T072 [US3] Implement piece destruction effects in AnimationEngine
+- [ ] T073 [US3] Create piece-specific interaction classes (Mirror, Shield, Turret, Jumper, Splitter)
 
 ## Phase 6: User Story 4 - 游戏流程和胜负判定 (P1)
 
@@ -133,24 +138,24 @@ description: "Task list for laser chess game implementation"
 **Implementation Strategy**: Implement game flow control, timer system, and win condition checking
 
 ### Tests (US4)
-- [ ] T069 [US4] Create unit tests for game state transitions in tests/unit/core/StateManager.test.js
-- [ ] T070 [US4] Create unit tests for timer functionality in tests/unit/core/Timer.test.js
-- [ ] T071 [US4] Create unit tests for win condition checking in tests/unit/core/GameEngine.test.js
-- [ ] T072 [US4] Create integration tests for complete game flow in tests/integration/game-flow/full-game.test.js
-- [ ] T073 [US4] Create e2e tests for game completion in tests/e2e/user-journey/game-completion.test.js
+- [ ] T074 [US4] Create unit tests for game state transitions in tests/unit/core/StateManager.test.js
+- [ ] T075 [US4] Create unit tests for timer functionality in tests/unit/core/Timer.test.js
+- [ ] T076 [US4] Create unit tests for win condition checking in tests/unit/core/GameEngine.test.js
+- [ ] T077 [US4] Create integration tests for complete game flow in tests/integration/game-flow/full-game.test.js
+- [ ] T078 [US4] Create e2e tests for game completion in tests/e2e/user-journey/game-completion.test.js
 
 ### Implementation Tasks (US4)
-- [ ] T074 [US4] Implement turn management in GameEngine.switchTurn()
-- [ ] T075 [P] [US4] Create timer system in core/Timer.js
-- [ ] T076 [P] [US4] Implement time expiration handling in GameEngine.handleTimeExpired()
-- [ ] T077 [US4] Implement win condition checking in GameEngine.checkWinCondition()
-- [ ] T078 [P] [US4] Implement game over state management in StateManager
-- [ ] T079 [US4] Create timer display in UIController
-- [ ] T080 [P] [US4] Create game status display in UIController
-- [ ] T081 [US4] Implement game end screen in UIController
-- [ ] T082 [P] [US4] Create restart functionality in GameEngine
-- [ ] T083 [US4] Implement main menu navigation in UIController
-- [ ] T084 [US4] Create move history tracking in GameEngine
+- [ ] T079 [US4] Implement turn management in GameEngine.switchTurn()
+- [ ] T080 [P] [US4] Create timer system in core/Timer.js
+- [ ] T081 [P] [US4] Implement time expiration handling in GameEngine.handleTimeExpired()
+- [ ] T082 [US4] Implement win condition checking in GameEngine.checkWinCondition()
+- [ ] T083 [P] [US4] Implement game over state management in StateManager
+- [ ] T084 [US4] Create timer display in UIController
+- [ ] T085 [P] [US4] Create game status display in UIController
+- [ ] T086 [US4] Implement game end screen in UIController
+- [ ] T087 [P] [US4] Create restart functionality in GameEngine
+- [ ] T088 [US4] Implement main menu navigation in UIController
+- [ ] T089 [US4] Create move history tracking in GameEngine
 
 ## Phase 7: User Story 5 - 界面交互和用户体验 (P2)
 
@@ -159,55 +164,55 @@ description: "Task list for laser chess game implementation"
 **Implementation Strategy**: Enhance UI with animations, hover effects, and real-time feedback
 
 ### Tests (US5)
-- [ ] T085 [US5] Create unit tests for UI interactions in tests/unit/ui/UIController.test.js
-- [ ] T086 [US5] Create unit tests for animations in tests/unit/ui/AnimationEngine.test.js
-- [ ] T087 [US5] Create integration tests for UI feedback in tests/integration/ui/user-feedback.test.js
-- [ ] T088 [US5] Create e2e tests for user experience in tests/e2e/user-journey/ux-flow.test.js
+- [ ] T090 [US5] Create unit tests for UI interactions in tests/unit/ui/UIController.test.js
+- [ ] T091 [US5] Create unit tests for animations in tests/unit/ui/AnimationEngine.test.js
+- [ ] T092 [US5] Create integration tests for UI feedback in tests/integration/ui/user-feedback.test.js
+- [ ] T093 [US5] Create e2e tests for user experience in tests/e2e/user-journey/ux-flow.test.js
 
 ### Implementation Tasks (US5)
-- [ ] T089 [US5] Implement piece hover effects in UIController
-- [ ] T090 [P] [US5] Create smooth piece movement animations in AnimationEngine
-- [ ] T091 [P] [US5] Implement laser path animation with proper timing in AnimationEngine
-- [ ] T092 [P] [US5] Create piece destruction animations in AnimationEngine
-- [ ] T093 [US5] Implement real-time status updates in UIController
-- [ ] T094 [P] [US5] Create sound effects system in core/SoundEngine.js
-- [ ] T095 [US5] Implement responsive design for different screen sizes
-- [ ] T096 [P] [US5] Create loading screens and transitions
-- [ ] T097 [US5] Implement accessibility features (keyboard navigation, screen reader support)
-- [ ] T098 [US5] Create visual indicators for game state changes
+- [ ] T094 [US5] Implement piece hover effects in UIController
+- [ ] T095 [P] [US5] Create smooth piece movement animations in AnimationEngine
+- [ ] T096 [P] [US5] Implement laser path animation with proper timing in AnimationEngine
+- [ ] T097 [P] [US5] Create piece destruction animations in AnimationEngine
+- [ ] T098 [US5] Implement real-time status updates in UIController
+- [ ] T099 [P] [US5] Create sound effects system in core/SoundEngine.js
+- [ ] T100 [US5] Implement responsive design for different screen sizes
+- [ ] T101 [P] [US5] Create loading screens and transitions
+- [ ] T102 [US5] Implement accessibility features (keyboard navigation, screen reader support)
+- [ ] T103 [US5] Create visual indicators for game state changes
 
 ## Phase 8: Polish & Cross-Cutting Concerns
 
 **Purpose**: Final optimization, testing, and deployment preparation
 
 ### Performance Optimization
-- [ ] T099 Implement offscreen canvas optimization in BoardRenderer
-- [ ] T100 [P] Optimize laser physics calculations for <10ms target
-- [ ] T101 [P] Implement object pooling for frequent object creation/destruction
-- [ ] T102 Optimize animation frame rate to maintain 60fps
-- [ ] T103 [P] Implement lazy loading for assets
-- [ ] T104 Create performance monitoring system in core/PerformanceMonitor.js
-- [ ] T105 [P] Implement user operation response time tracking (<200ms)
-- [ ] T106 [P] Add memory usage monitoring for game instances (<1MB)
-- [ ] T107 Create performance benchmark tests in tests/performance/benchmarks.test.js
+- [ ] T104 Implement offscreen canvas optimization in BoardRenderer
+- [ ] T105 [P] Optimize laser physics calculations for <10ms target
+- [ ] T106 [P] Implement object pooling for frequent object creation/destruction
+- [ ] T107 Optimize animation frame rate to maintain 60fps
+- [ ] T108 [P] Implement lazy loading for assets
+- [ ] T109 Create performance monitoring system in core/PerformanceMonitor.js
+- [ ] T110 [P] Implement user operation response time tracking (<200ms)
+- [ ] T111 [P] Add memory usage monitoring for game instances (<1MB)
+- [ ] T112 Create performance benchmark tests in tests/performance/benchmarks.test.js
 
 ### Error Handling & Robustness
-- [ ] T108 Implement comprehensive error handling in GameEngine
-- [ ] T109 [P] Add input validation for all user inputs
-- [ ] T110 Implement graceful degradation for older browsers
-- [ ] T111 [P] Add error logging and debugging utilities
+- [ ] T113 Implement comprehensive error handling in GameEngine
+- [ ] T114 [P] Add input validation for all user inputs
+- [ ] T115 Implement graceful degradation for older browsers
+- [ ] T116 [P] Add error logging and debugging utilities
 
 ### Testing & Quality Assurance
-- [ ] T112 Complete all unit tests to achieve 80% code coverage
-- [ ] T113 [P] Run cross-browser compatibility tests
-- [ ] T114 Perform performance testing and optimization
-- [ ] T115 [P] Conduct user acceptance testing
+- [ ] T117 Complete all unit tests to achieve 80% code coverage
+- [ ] T118 [P] Run cross-browser compatibility tests
+- [ ] T119 Perform performance testing and optimization
+- [ ] T120 [P] Conduct user acceptance testing
 
 ### Documentation & Deployment
-- [ ] T116 Update inline code documentation
-- [ ] T117 [P] Create deployment scripts and CI/CD configuration
-- [ ] T118 Optimize assets for production (minification, compression)
-- [ ] T119 [P] Create user documentation and help system
+- [ ] T121 Update inline code documentation
+- [ ] T122 [P] Create deployment scripts and CI/CD configuration
+- [ ] T123 Optimize assets for production (minification, compression)
+- [ ] T124 [P] Create user documentation and help system
 
 ## Dependencies & Story Completion Order
 
@@ -220,10 +225,10 @@ US1 (Game Setup) → US2 (Basic Operations) → US3 (Laser Physics) → US4 (Gam
 1. **Setup & Foundational phases** (T001-T021) - Block all stories
 2. **US1: Game Setup** (T022-T035) - Enables basic game creation
 3. **US2: Basic Operations** (T036-T051) - Enables piece interaction
-4. **US3: Laser Physics** (T052-T068) - Enables core game mechanics
-5. **US4: Game Flow** (T069-T084) - Enables complete game sessions
-6. **US5: UX Polish** (T085-T098) - Enhanced user experience
-7. **Polish Phase** (T099-T115) - Production readiness
+4. **US3: Laser Physics** (T052-T073) - Enables core game mechanics
+5. **US4: Game Flow** (T074-T089) - Enables complete game sessions
+6. **US5: UX Polish** (T090-T103) - Enhanced user experience
+7. **Polish Phase** (T104-T124) - Production readiness
 
 ## Parallel Execution Opportunities
 

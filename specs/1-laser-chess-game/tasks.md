@@ -57,21 +57,21 @@ description: "激光棋游戏实现任务列表"
 
 ### 测试任务 (US1)
 - [x] T022 [US1] 在 tests/alignment.spec.js 中创建棋盘坐标对齐测试
-- [ ] T023 [US1] 在 tests/unit/models/Board.test.js 中创建棋盘初始化单元测试
-- [ ] T024 [US1] 在 tests/integration/game-flow/setup.test.js 中创建游戏设置流程集成测试
-- [ ] T025 [US1] 在 tests/e2e/user-journey/game-start.test.js 中创建游戏初始化端到端测试
+- [x] T023 [US1] 在 tests/unit/models/Board.test.js 中创建棋盘初始化单元测试
+- [x] T024 [US1] 在 tests/integration/game-flow/setup.test.js 中创建游戏设置流程集成测试
+- [x] T025 [US1] 在 tests/e2e/user-journey/game-start.test.js 中创建游戏初始化端到端测试
 
 ### 实现任务 (US1)
 - [x] T026 [US1] 实现游戏创建逻辑（基础框架已完成）
 - [x] T027 [P] [US1] 实现时间模式设置（10+0, 15+10, 无限）
 - [x] T028 [P] [US1] 实现初始棋盘布局（对称布局已定义）
 - [x] T029 [P] [US1] 实现玩家初始化（白方/黑方，起始位置）
-- [ ] T030 [US1] 实现'等待中'状态的游戏状态管理
+- [x] T030 [US1] 实现'等待中'状态的游戏状态管理
 - [x] T031 [P] [US1] 创建游戏设置UI组件（主菜单界面已完成）
 - [x] T032 [P] [US1] 实现初始状态的棋盘渲染（Canvas渲染已完成）
-- [ ] T033 [US1] 实现 GameEngine.startGame() 游戏开始功能
+- [x] T033 [US1] 实现 GameEngine.startGame() 游戏开始功能
 - [x] T034 [P] [US1] 创建计时器初始化和显示
-- [ ] T035 [US1] 实现 GameEngine 和 UI 组件之间的设置集成
+- [x] T035 [US1] 实现 GameEngine 和 UI 组件之间的设置集成
 
 ### 已完成的额外工作
 - [x] 创建初始棋子布局规范文档（specs/1-laser-chess-game/initial-setup.md）
@@ -290,11 +290,12 @@ US1 (游戏设置) → US2 (基础操作) → US3 (激光物理) → US4 (游戏
 
 ## 当前进度
 
-**阶段1完成度**: 6/10 任务已完成 (60%)
-**阶段3 (US1) 完成度**: 7/14 任务已完成 (50%)
-**总体进度**: 约 15% 已完成
+**阶段1完成度**: 10/10 任务已完成 (100%) ✅
+**阶段2完成度**: 11/11 任务已完成 (100%) ✅
+**阶段3 (US1) 完成度**: 14/14 任务已完成 (100%) ✅
+**总体进度**: 35/120 任务已完成 (29%)
 
 **下一步优先级**:
-1. 完成阶段1剩余任务（配置和工具函数）
-2. 实现阶段2基础模型类
-3. 完成US1的剩余任务（状态管理和集成）
+1. 开始阶段4（US2 - 基础棋子操作）
+2. 实现棋子移动、旋转和激光发射的UI交互
+3. 完成基础游戏循环

@@ -160,11 +160,11 @@ class LaserChessUI {
             { row: 0, col: 4, type: 'shield', direction: 'right' },
             { row: 0, col: 5, type: 'splitter', direction: 'right' },
             { row: 0, col: 6, type: 'jumper', direction: 'down' },
-            // 第6行 (row 1): abc镜子↓, d盾牌↑, efg镜子→
+            // 第6行 (row 1): abc镜子↓, d盾牌↓, efg镜子→
             { row: 1, col: 0, type: 'mirror', direction: 'down' },
             { row: 1, col: 1, type: 'mirror', direction: 'down' },
             { row: 1, col: 2, type: 'mirror', direction: 'down' },
-            { row: 1, col: 3, type: 'shield', direction: 'up' },
+            { row: 1, col: 3, type: 'shield', direction: 'down' },
             { row: 1, col: 4, type: 'mirror', direction: 'right' },
             { row: 1, col: 5, type: 'mirror', direction: 'right' },
             { row: 1, col: 6, type: 'mirror', direction: 'right' }

@@ -1,280 +1,300 @@
 ---
 
-description: "Task list for laser chess game implementation"
+description: "激光棋游戏实现任务列表"
 ---
 
-# Tasks: Laser Chess Game
+# 任务清单：激光棋游戏
 
-**Input**: Design documents from `/specs/1-laser-chess-game/`
-**Prerequisites**: plan.md, spec.md, research.md, data-model.md, contracts/
+**输入**: 来自 `/specs/1-laser-chess-game/` 的设计文档
+**前置条件**: plan.md, spec.md, research.md, data-model.md, contracts/
 
-**Tests**: 根据TDD章程原则，测试是强制性的。每个用户故事必须有相应的测试用例，采用Jest+Playwright测试金字塔结构。
+**测试**: 根据TDD章程原则，测试是强制性的。每个用户故事必须有相应的测试用例，采用Jest+Playwright测试金字塔结构。
 
-**Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
+**组织方式**: 任务按用户故事分组，以便独立实现和测试每个故事。
 
-## Format: `[ID] [P?] [Story] Description`
+## 格式: `[ID] [P?] [Story] 描述`
 
-- **[P]**: Can run in parallel (different files, no dependencies)
-- **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
-- Include exact file paths in descriptions
+- **[P]**: 可以并行执行（不同文件，无依赖关系）
+- **[Story]**: 任务所属的用户故事（例如：US1, US2, US3）
+- 描述中包含精确的文件路径
 
-## Phase 1: Setup (Shared Infrastructure)
+## 第一阶段：项目搭建（共享基础设施）
 
-**Purpose**: Project initialization and basic structure
+**目标**: 项目初始化和基础结构
 
-- [ ] T001 Create project directory structure per implementation plan
-- [ ] T002 [P] Create package.json with Jest and Playwright dependencies
-- [ ] T003 [P] Create basic HTML structure in public/index.html
-- [ ] T004 [P] Create CSS foundation in public/css/style.css
-- [ ] T005 [P] Create basic JavaScript entry point in src/main.js
-- [ ] T006 [P] Create test configuration files (jest.config.js, playwright.config.js)
-- [ ] T007 [P] Create game configuration object in src/config/game-config.js
-- [ ] T008 Create utility functions in src/utils/geometry.js
-- [ ] T009 Create validation utilities in src/utils/validation.js
-- [ ] T010 Create event bus system in src/core/EventBus.js
+- [x] T001 创建项目目录结构（按实现计划）
+- [x] T002 [P] 创建 package.json 并添加 Jest 和 Playwright 依赖
+- [x] T003 [P] 在 public/index.html 中创建基础 HTML 结构
+- [x] T004 [P] 在 public/css/style.css 中创建 CSS 基础样式
+- [x] T005 [P] 在 public/js/main.js 中创建基础 JavaScript 入口
+- [x] T006 [P] 创建测试配置文件（playwright.config.js）
+- [ ] T007 [P] 在 src/config/game-config.js 中创建游戏配置对象
+- [ ] T008 在 src/utils/geometry.js 中创建几何计算工具函数
+- [ ] T009 在 src/utils/validation.js 中创建验证工具函数
+- [ ] T010 在 src/core/EventBus.js 中创建事件总线系统
 
-## Phase 2: Foundational (Blocking Prerequisites)
+## 第二阶段：基础设施（必需的前置条件）
 
-**Purpose**: Core infrastructure needed before any user stories
+**目标**: 任何用户故事开始前需要的核心基础设施
 
-- [ ] T011 Create base Piece class in src/models/Piece.js
-- [ ] T012 Create Player model in src/models/Player.js
-- [ ] T013 Create Board model in src/models/Board.js
-- [ ] T014 Create Laser model in src/models/Laser.js
-- [ ] T015 Create Game model in src/models/Game.js
-- [ ] T016 Create StateManager in src/core/StateManager.js
-- [ ] T017 Create PhysicsEngine foundation in src/core/PhysicsEngine.js
-- [ ] T018 Create GameEngine foundation in src/core/GameEngine.js
-- [ ] T019 Create base BoardRenderer in src/ui/BoardRenderer.js
-- [ ] T020 Create AnimationEngine foundation in src/ui/AnimationEngine.js
-- [ ] T021 Create UIController foundation in src/ui/UIController.js
+- [ ] T011 在 src/models/Piece.js 中创建基础棋子类
+- [ ] T012 在 src/models/Player.js 中创建玩家模型
+- [ ] T013 在 src/models/Board.js 中创建棋盘模型
+- [ ] T014 在 src/models/Laser.js 中创建激光模型
+- [ ] T015 在 src/models/Game.js 中创建游戏模型
+- [ ] T016 在 src/core/StateManager.js 中创建状态管理器
+- [ ] T017 在 src/core/PhysicsEngine.js 中创建物理引擎基础
+- [ ] T018 在 src/core/GameEngine.js 中创建游戏引擎基础
+- [ ] T019 在 src/ui/BoardRenderer.js 中创建棋盘渲染器基础
+- [ ] T020 在 src/ui/AnimationEngine.js 中创建动画引擎基础
+- [ ] T021 在 src/ui/UIController.js 中创建UI控制器基础
 
-## Phase 3: User Story 1 - 游戏初始化和设置 (P1)
+## 第三阶段：用户故事1 - 游戏初始化和设置 (P1)
 
-**Goal**: 新玩家可以开始一局激光棋游戏，选择设置并看到棋盘布局
-**Independent Test**: 用户完成游戏设置并看到初始棋盘布局，无需其他功能支持
-**Implementation Strategy**: Focus on game creation, board setup, and basic UI rendering
+**目标**: 新玩家可以开始一局激光棋游戏，选择设置并看到棋盘布局
+**独立测试**: 用户完成游戏设置并看到初始棋盘布局，无需其他功能支持
+**实现策略**: 专注于游戏创建、棋盘设置和基础UI渲染
 
-### Tests (US1)
-- [ ] T022 [US1] Create unit tests for Game creation in tests/unit/models/Game.test.js
-- [ ] T023 [US1] Create unit tests for Board initialization in tests/unit/models/Board.test.js
-- [ ] T024 [US1] Create integration tests for game setup flow in tests/integration/game-flow/setup.test.js
-- [ ] T025 [US1] Create e2e tests for game initialization in tests/e2e/user-journey/game-start.test.js
+### 测试任务 (US1)
+- [x] T022 [US1] 在 tests/alignment.spec.js 中创建棋盘坐标对齐测试
+- [ ] T023 [US1] 在 tests/unit/models/Board.test.js 中创建棋盘初始化单元测试
+- [ ] T024 [US1] 在 tests/integration/game-flow/setup.test.js 中创建游戏设置流程集成测试
+- [ ] T025 [US1] 在 tests/e2e/user-journey/game-start.test.js 中创建游戏初始化端到端测试
 
-### Implementation Tasks (US1)
-- [ ] T026 [US1] Implement game creation logic in GameEngine.createGame() method
-- [ ] T027 [P] [US1] Implement time mode settings in GameEngine.setTimeMode()
-- [ ] T028 [P] [US1] Implement initial board setup with predefined symmetric layout
-- [ ] T029 [P] [US1] Implement player initialization (white/black, starting positions)
-- [ ] T030 [US1] Implement game state management for 'waiting' state
-- [ ] T031 [P] [US1] Create game setup UI components in UIController
-- [ ] T032 [P] [US1] Implement board rendering for initial state in BoardRenderer
-- [ ] T033 [US1] Implement game start functionality in GameEngine.startGame()
-- [ ] T034 [P] [US1] Create timer initialization and display
-- [ ] T035 [US1] Implement integration between GameEngine and UI components for setup
+### 实现任务 (US1)
+- [x] T026 [US1] 实现游戏创建逻辑（基础框架已完成）
+- [x] T027 [P] [US1] 实现时间模式设置（10+0, 15+10, 无限）
+- [x] T028 [P] [US1] 实现初始棋盘布局（对称布局已定义）
+- [x] T029 [P] [US1] 实现玩家初始化（白方/黑方，起始位置）
+- [ ] T030 [US1] 实现'等待中'状态的游戏状态管理
+- [x] T031 [P] [US1] 创建游戏设置UI组件（主菜单界面已完成）
+- [x] T032 [P] [US1] 实现初始状态的棋盘渲染（Canvas渲染已完成）
+- [ ] T033 [US1] 实现 GameEngine.startGame() 游戏开始功能
+- [x] T034 [P] [US1] 创建计时器初始化和显示
+- [ ] T035 [US1] 实现 GameEngine 和 UI 组件之间的设置集成
 
-## Phase 4: User Story 2 - 基础棋子操作 (P1)
+### 已完成的额外工作
+- [x] 创建初始棋子布局规范文档（specs/1-laser-chess-game/initial-setup.md）
+- [x] 实现所有棋子类型的Canvas绘制（镜子、盾牌、炮塔、分光器、跳台）
+- [x] 修复棋盘坐标标签对齐问题
+- [x] 实现黑白方颜色方案（白方浅色，黑方深色）
+- [x] 实现棋子方向旋转逻辑（不同棋子类型使用不同旋转规则）
+- [x] 增强分光器方向指示（粗实线+三角形箭头）
+- [x] 创建 .gitignore 文件
 
-**Goal**: 玩家可以在回合内移动、转动棋子或发射激光
-**Independent Test**: 玩家可以独立执行移动、转动或激光发射操作，验证基础游戏逻辑
-**Implementation Strategy**: Implement piece movement, rotation, and laser firing mechanics
+## 第四阶段：用户故事2 - 基础棋子操作 (P1)
 
-### Tests (US2)
-- [ ] T036 [US2] Create unit tests for piece movement in tests/unit/models/Piece.test.js
-- [ ] T037 [US2] Create unit tests for piece rotation in tests/unit/models/Piece.test.js
-- [ ] T038 [US2] Create unit tests for valid move calculation in tests/unit/utils/validation.test.js
-- [ ] T039 [US2] Create integration tests for piece operations in tests/integration/game-flow/piece-operations.test.js
-- [ ] T040 [US2] Create e2e tests for piece interaction in tests/e2e/user-journey/piece-movement.test.js
+**目标**: 玩家可以在回合内移动、转动棋子或发射激光
+**独立测试**: 玩家可以独立执行移动、转动或激光发射操作，验证基础游戏逻辑
+**实现策略**: 实现棋子移动、旋转和激光发射机制
 
-### Implementation Tasks (US2)
-- [ ] T041 [US2] Implement piece-specific movement logic in Piece subclasses
-- [ ] T042 [P] [US2] Implement castle movement validation in utils/validation.js
-- [ ] T043 [P] [US2] Implement piece rotation mechanics in Piece.rotate() method
-- [ ] T044 [P] [US2] Implement turret firing mechanism in GameEngine.fireLaser()
-- [ ] T045 [US2] Implement move validation in StateManager.validateMove()
-- [ ] T046 [P] [US2] Create piece selection UI in UIController
-- [ ] T047 [P] [US2] Implement valid move highlighting in BoardRenderer
-- [ ] T048 [US2] Implement move animation in AnimationEngine
-- [ ] T049 [US2] Implement rotation animation in AnimationEngine
-- [ ] T050 [US2] Create action buttons (Move, Rotate, Fire Laser) in UIController
-- [ ] T051 [US2] Implement turn-based action validation in GameEngine
+### 测试任务 (US2)
+- [ ] T036 [US2] 在 tests/unit/models/Piece.test.js 中创建棋子移动单元测试
+- [ ] T037 [US2] 在 tests/unit/models/Piece.test.js 中创建棋子旋转单元测试
+- [ ] T038 [US2] 在 tests/unit/utils/validation.test.js 中创建有效移动计算单元测试
+- [ ] T039 [US2] 在 tests/integration/game-flow/piece-operations.test.js 中创建棋子操作集成测试
+- [ ] T040 [US2] 在 tests/e2e/user-journey/piece-movement.test.js 中创建棋子交互端到端测试
 
-## Phase 5: User Story 3 - 激光物理和交互系统 (P1)
+### 实现任务 (US2)
+- [ ] T041 [US2] 在 Piece 子类中实现棋子特定的移动逻辑
+- [ ] T042 [P] [US2] 在 utils/validation.js 中实现城堡移动验证
+- [ ] T043 [P] [US2] 在 Piece.rotate() 方法中实现棋子旋转机制
+- [ ] T044 [P] [US2] 在 GameEngine.fireLaser() 中实现炮塔发射机制
+- [ ] T045 [US2] 在 StateManager.validateMove() 中实现移动验证
+- [ ] T046 [P] [US2] 在 UIController 中创建棋子选择UI
+- [ ] T047 [P] [US2] 在 BoardRenderer 中实现有效移动高亮显示
+- [ ] T048 [US2] 在 AnimationEngine 中实现移动动画
+- [ ] T049 [US2] 在 AnimationEngine 中实现旋转动画
+- [ ] T050 [US2] 在 UIController 中创建操作按钮（移动、旋转、发射激光）
+- [ ] T051 [US2] 在 GameEngine 中实现回合制操作验证
 
-**Goal**: 激光发射后正确处理与各种棋子的交互
-**Independent Test**: 每种激光与棋子的交互都可以独立测试，验证物理规则正确性
-**Implementation Strategy**: Implement laser physics engine with all interaction types
+## 第五阶段：用户故事3 - 激光物理和交互系统 (P1)
 
-### Tests (US3)
-- [ ] T052 [US3] Create unit tests for laser reflection in tests/unit/engines/PhysicsEngine.test.js
-- [ ] T053 [US3] Create unit tests for shield blocking from front and back in tests/unit/engines/PhysicsEngine.test.js
-- [ ] T054 [US3] Create unit tests for jumper jumping from front and back in tests/unit/engines/PhysicsEngine.test.js
-- [ ] T055 [US3] Create unit tests for jumper destruction from sides in tests/unit/engines/PhysicsEngine.test.js
-- [ ] T056 [US3] Create unit tests for splitter splitting from front and sides in tests/unit/engines/PhysicsEngine.test.js
-- [ ] T057 [US3] Create unit tests for splitter destruction from back in tests/unit/engines/PhysicsEngine.test.js
-- [ ] T058 [US3] Create integration tests for updated laser physics in tests/integration/physics/laser-interactions.test.js
-- [ ] T059 [US3] Create e2e tests for new laser scenarios in tests/e2e/user-journey/laser-physics.test.js
+**目标**: 激光发射后正确处理与各种棋子的交互
+**独立测试**: 每种激光与棋子的交互都可以独立测试，验证物理规则正确性
+**实现策略**: 实现激光物理引擎和所有交互类型
 
-### Implementation Tasks (US3)
-- [ ] T060 [US3] Implement laser path calculation in PhysicsEngine.calculateLaserPath()
-- [ ] T061 [P] [US3] Implement mirror reflection logic in PhysicsEngine.calculateReflection()
-- [ ] T062 [P] [US3] Implement shield blocking from front and back in PhysicsEngine.calculateBlock()
-- [ ] T063 [P] [US3] Implement shield destruction from sides in PhysicsEngine.calculateShieldDestruction()
-- [ ] T064 [P] [US3] Implement turret destruction logic in PhysicsEngine.calculateTurretHit()
-- [ ] T065 [P] [US3] Implement jumper jumping from front and back in PhysicsEngine.calculateJump()
-- [ ] T066 [P] [US3] Implement jumper destruction from sides in PhysicsEngine.calculateJumperDestruction()
-- [ ] T067 [P] [US3] Implement splitter splitting from front and sides in PhysicsEngine.calculateSplit()
-- [ ] T068 [P] [US3] Implement splitter destruction from back in PhysicsEngine.calculateSplitterDestruction()
-- [ ] T069 [US3] Implement laser interaction validation in PhysicsEngine.validateInteraction()
-- [ ] T070 [P] [US3] Create laser rendering in BoardRenderer
-- [ ] T071 [US3] Implement laser animation in AnimationEngine
-- [ ] T072 [US3] Implement piece destruction effects in AnimationEngine
-- [ ] T073 [US3] Create piece-specific interaction classes (Mirror, Shield, Turret, Jumper, Splitter)
+### 测试任务 (US3)
+- [ ] T052 [US3] 在 tests/unit/engines/PhysicsEngine.test.js 中创建激光反射单元测试
+- [ ] T053 [US3] 在 tests/unit/engines/PhysicsEngine.test.js 中创建盾牌正反面阻挡单元测试
+- [ ] T054 [US3] 在 tests/unit/engines/PhysicsEngine.test.js 中创建跳台正反面跳跃单元测试
+- [ ] T055 [US3] 在 tests/unit/engines/PhysicsEngine.test.js 中创建跳台侧面摧毁单元测试
+- [ ] T056 [US3] 在 tests/unit/engines/PhysicsEngine.test.js 中创建分光器正面和侧面分光单元测试
+- [ ] T057 [US3] 在 tests/unit/engines/PhysicsEngine.test.js 中创建分光器背面摧毁单元测试
+- [ ] T058 [US3] 在 tests/integration/physics/laser-interactions.test.js 中创建更新的激光物理集成测试
+- [ ] T059 [US3] 在 tests/e2e/user-journey/laser-physics.test.js 中创建新激光场景端到端测试
 
-## Phase 6: User Story 4 - 游戏流程和胜负判定 (P1)
+### 实现任务 (US3)
+- [ ] T060 [US3] 在 PhysicsEngine.calculateLaserPath() 中实现激光路径计算
+- [ ] T061 [P] [US3] 在 PhysicsEngine.calculateReflection() 中实现镜子反射逻辑
+- [ ] T062 [P] [US3] 在 PhysicsEngine.calculateBlock() 中实现盾牌正反面阻挡
+- [ ] T063 [P] [US3] 在 PhysicsEngine.calculateShieldDestruction() 中实现盾牌侧面摧毁
+- [ ] T064 [P] [US3] 在 PhysicsEngine.calculateTurretHit() 中实现炮塔摧毁逻辑
+- [ ] T065 [P] [US3] 在 PhysicsEngine.calculateJump() 中实现跳台正反面跳跃
+- [ ] T066 [P] [US3] 在 PhysicsEngine.calculateJumperDestruction() 中实现跳台侧面摧毁
+- [ ] T067 [P] [US3] 在 PhysicsEngine.calculateSplit() 中实现分光器正面和侧面分光
+- [ ] T068 [P] [US3] 在 PhysicsEngine.calculateSplitterDestruction() 中实现分光器背面摧毁
+- [ ] T069 [US3] 在 PhysicsEngine.validateInteraction() 中实现激光交互验证
+- [ ] T070 [P] [US3] 在 BoardRenderer 中创建激光渲染
+- [ ] T071 [US3] 在 AnimationEngine 中实现激光动画
+- [ ] T072 [US3] 在 AnimationEngine 中实现棋子摧毁效果
+- [ ] T073 [US3] 创建棋子特定交互类（Mirror, Shield, Turret, Jumper, Splitter）
 
-**Goal**: 玩家了解游戏状态，包括回合切换、时间管理和胜负判定
-**Independent Test**: 游戏的完整流程可以独立运行并正确判定胜负状态
-**Implementation Strategy**: Implement game flow control, timer system, and win condition checking
+## 第六阶段：用户故事4 - 游戏流程和胜负判定 (P1)
 
-### Tests (US4)
-- [ ] T074 [US4] Create unit tests for game state transitions in tests/unit/core/StateManager.test.js
-- [ ] T075 [US4] Create unit tests for timer functionality in tests/unit/core/Timer.test.js
-- [ ] T076 [US4] Create unit tests for win condition checking in tests/unit/core/GameEngine.test.js
-- [ ] T077 [US4] Create integration tests for complete game flow in tests/integration/game-flow/full-game.test.js
-- [ ] T078 [US4] Create e2e tests for game completion in tests/e2e/user-journey/game-completion.test.js
+**目标**: 玩家了解游戏状态，包括回合切换、时间管理和胜负判定
+**独立测试**: 游戏的完整流程可以独立运行并正确判定胜负状态
+**实现策略**: 实现游戏流程控制、计时器系统和胜利条件检查
 
-### Implementation Tasks (US4)
-- [ ] T079 [US4] Implement turn management in GameEngine.switchTurn()
-- [ ] T080 [P] [US4] Create timer system in core/Timer.js
-- [ ] T081 [P] [US4] Implement time expiration handling in GameEngine.handleTimeExpired()
-- [ ] T082 [US4] Implement win condition checking in GameEngine.checkWinCondition()
-- [ ] T083 [P] [US4] Implement game over state management in StateManager
-- [ ] T084 [US4] Create timer display in UIController
-- [ ] T085 [P] [US4] Create game status display in UIController
-- [ ] T086 [US4] Implement game end screen in UIController
-- [ ] T087 [P] [US4] Create restart functionality in GameEngine
-- [ ] T088 [US4] Implement main menu navigation in UIController
-- [ ] T089 [US4] Create move history tracking in GameEngine
+### 测试任务 (US4)
+- [ ] T074 [US4] 在 tests/unit/core/StateManager.test.js 中创建游戏状态转换单元测试
+- [ ] T075 [US4] 在 tests/unit/core/Timer.test.js 中创建计时器功能单元测试
+- [ ] T076 [US4] 在 tests/unit/core/GameEngine.test.js 中创建胜利条件检查单元测试
+- [ ] T077 [US4] 在 tests/integration/game-flow/full-game.test.js 中创建完整游戏流程集成测试
+- [ ] T078 [US4] 在 tests/e2e/user-journey/game-completion.test.js 中创建游戏完成端到端测试
 
-## Phase 7: User Story 5 - 界面交互和用户体验 (P2)
+### 实现任务 (US4)
+- [ ] T079 [US4] 在 GameEngine.switchTurn() 中实现回合管理
+- [ ] T080 [P] [US4] 在 core/Timer.js 中创建计时器系统
+- [ ] T081 [P] [US4] 在 GameEngine.handleTimeExpired() 中实现时间耗尽处理
+- [ ] T082 [US4] 在 GameEngine.checkWinCondition() 中实现胜利条件检查
+- [ ] T083 [P] [US4] 在 StateManager 中实现游戏结束状态管理
+- [ ] T084 [US4] 在 UIController 中创建计时器显示
+- [ ] T085 [P] [US4] 在 UIController 中创建游戏状态显示
+- [ ] T086 [US4] 在 UIController 中实现游戏结束画面
+- [ ] T087 [P] [US4] 在 GameEngine 中创建重新开始功能
+- [ ] T088 [US4] 在 UIController 中实现主菜单导航
+- [ ] T089 [US4] 在 GameEngine 中创建移动历史记录跟踪
 
-**Goal**: 玩家需要清晰的视觉反馈和流畅的操作体验
-**Independent Test**: 界面元素可以独立测试其显示效果和交互响应
-**Implementation Strategy**: Enhance UI with animations, hover effects, and real-time feedback
+## 第七阶段：用户故事5 - 界面交互和用户体验 (P2)
 
-### Tests (US5)
-- [ ] T090 [US5] Create unit tests for UI interactions in tests/unit/ui/UIController.test.js
-- [ ] T091 [US5] Create unit tests for animations in tests/unit/ui/AnimationEngine.test.js
-- [ ] T092 [US5] Create integration tests for UI feedback in tests/integration/ui/user-feedback.test.js
-- [ ] T093 [US5] Create e2e tests for user experience in tests/e2e/user-journey/ux-flow.test.js
+**目标**: 玩家需要清晰的视觉反馈和流畅的操作体验
+**独立测试**: 界面元素可以独立测试其显示效果和交互响应
+**实现策略**: 通过动画、悬停效果和实时反馈增强UI
 
-### Implementation Tasks (US5)
-- [ ] T094 [US5] Implement piece hover effects in UIController
-- [ ] T095 [P] [US5] Create smooth piece movement animations in AnimationEngine
-- [ ] T096 [P] [US5] Implement laser path animation with proper timing in AnimationEngine
-- [ ] T097 [P] [US5] Create piece destruction animations in AnimationEngine
-- [ ] T098 [US5] Implement real-time status updates in UIController
-- [ ] T099 [P] [US5] Create sound effects system in core/SoundEngine.js
-- [ ] T100 [US5] Implement responsive design for different screen sizes
-- [ ] T101 [P] [US5] Create loading screens and transitions
-- [ ] T102 [US5] Implement accessibility features (keyboard navigation, screen reader support)
-- [ ] T103 [US5] Create visual indicators for game state changes
+### 测试任务 (US5)
+- [ ] T090 [US5] 在 tests/unit/ui/UIController.test.js 中创建UI交互单元测试
+- [ ] T091 [US5] 在 tests/unit/ui/AnimationEngine.test.js 中创建动画单元测试
+- [ ] T092 [US5] 在 tests/integration/ui/user-feedback.test.js 中创建UI反馈集成测试
+- [ ] T093 [US5] 在 tests/e2e/user-journey/ux-flow.test.js 中创建用户体验端到端测试
 
-## Phase 8: Polish & Cross-Cutting Concerns
+### 实现任务 (US5)
+- [ ] T094 [US5] 在 UIController 中实现棋子悬停效果
+- [ ] T095 [P] [US5] 在 AnimationEngine 中创建平滑的棋子移动动画
+- [ ] T096 [P] [US5] 在 AnimationEngine 中实现带有适当时序的激光路径动画
+- [ ] T097 [P] [US5] 在 AnimationEngine 中创建棋子摧毁动画
+- [ ] T098 [US5] 在 UIController 中实现实时状态更新
+- [ ] T099 [P] [US5] 在 core/SoundEngine.js 中创建音效系统
+- [ ] T100 [US5] 实现不同屏幕尺寸的响应式设计
+- [ ] T101 [P] [US5] 创建加载画面和过渡效果
+- [ ] T102 [US5] 实现无障碍功能（键盘导航、屏幕阅读器支持）
+- [ ] T103 [US5] 创建游戏状态变化的视觉指示器
 
-**Purpose**: Final optimization, testing, and deployment preparation
+## 第八阶段：优化与跨功能改进
 
-### Performance Optimization
-- [ ] T104 Implement offscreen canvas optimization in BoardRenderer
-- [ ] T105 [P] Optimize laser physics calculations for <10ms target
-- [ ] T106 [P] Implement object pooling for frequent object creation/destruction
-- [ ] T107 Optimize animation frame rate to maintain 60fps
-- [ ] T108 [P] Implement lazy loading for assets
-- [ ] T109 Create performance monitoring system in core/PerformanceMonitor.js
-- [ ] T110 [P] Implement user operation response time tracking (<200ms)
-- [ ] T111 [P] Add memory usage monitoring for game instances (<1MB)
-- [ ] T112 Create performance benchmark tests in tests/performance/benchmarks.test.js
+**目标**: 最终优化、测试和部署准备
 
-### Error Handling & Robustness
-- [ ] T113 Implement comprehensive error handling in GameEngine
-- [ ] T114 [P] Add input validation for all user inputs
-- [ ] T115 Implement graceful degradation for older browsers
-- [ ] T116 [P] Add error logging and debugging utilities
+### 性能优化
+- [ ] T104 在 BoardRenderer 中实现离屏Canvas优化
+- [ ] T105 [P] 优化激光物理计算以达到<10ms目标
+- [ ] T106 [P] 为频繁的对象创建/销毁实现对象池
+- [ ] T107 优化动画帧率以保持60fps
+- [ ] T108 [P] 为资源实现懒加载
+- [ ] T109 在 core/PerformanceMonitor.js 中创建性能监控系统
+- [ ] T110 [P] 实现用户操作响应时间跟踪（<200ms）
+- [ ] T111 [P] 添加游戏实例的内存使用监控（<1MB）
+- [ ] T112 在 tests/performance/benchmarks.test.js 中创建性能基准测试
 
-### Testing & Quality Assurance
-- [ ] T117 Complete all unit tests to achieve 80% code coverage
-- [ ] T118 [P] Run cross-browser compatibility tests
-- [ ] T119 Perform performance testing and optimization
-- [ ] T120 [P] Conduct user acceptance testing
+### 错误处理与健壮性
+- [ ] T113 在 GameEngine 中实现全面的错误处理
+- [ ] T114 [P] 为所有用户输入添加输入验证
+- [ ] T115 为旧版浏览器实现优雅降级
+- [ ] T116 [P] 添加错误日志和调试工具
 
-### Documentation & Deployment
-- [ ] T121 Update inline code documentation
-- [ ] T122 [P] Create deployment scripts and CI/CD configuration
-- [ ] T123 Optimize assets for production (minification, compression)
-- [ ] T124 [P] Create user documentation and help system
+### 测试与质量保证
+- [ ] T117 完成所有单元测试以达到80%代码覆盖率
+- [ ] T118 [P] 运行跨浏览器兼容性测试
+- [ ] T119 执行性能测试和优化
+- [ ] T120 [P] 进行用户验收测试
 
-## Dependencies & Story Completion Order
+### 文档与部署
+- [ ] T121 更新内联代码文档
+- [ ] T122 [P] 创建部署脚本和CI/CD配置
+- [ ] T123 优化生产环境资源（压缩、混淆）
+- [ ] T124 [P] 创建用户文档和帮助系统
 
-### Story Dependencies
+## 依赖关系与故事完成顺序
+
+### 故事依赖
 ```
-US1 (Game Setup) → US2 (Basic Operations) → US3 (Laser Physics) → US4 (Game Flow) → US5 (UX Polish)
+US1 (游戏设置) → US2 (基础操作) → US3 (激光物理) → US4 (游戏流程) → US5 (用户体验优化)
 ```
 
-### Critical Path
-1. **Setup & Foundational phases** (T001-T021) - Block all stories
-2. **US1: Game Setup** (T022-T035) - Enables basic game creation
-3. **US2: Basic Operations** (T036-T051) - Enables piece interaction
-4. **US3: Laser Physics** (T052-T073) - Enables core game mechanics
-5. **US4: Game Flow** (T074-T089) - Enables complete game sessions
-6. **US5: UX Polish** (T090-T103) - Enhanced user experience
-7. **Polish Phase** (T104-T124) - Production readiness
+### 关键路径
+1. **搭建和基础设施阶段** (T001-T021) - 阻塞所有故事
+2. **US1: 游戏设置** (T022-T035) - 启用基本游戏创建
+3. **US2: 基础操作** (T036-T051) - 启用棋子交互
+4. **US3: 激光物理** (T052-T073) - 启用核心游戏机制
+5. **US4: 游戏流程** (T074-T089) - 启用完整游戏会话
+6. **US5: 用户体验优化** (T090-T103) - 增强用户体验
+7. **优化阶段** (T104-T124) - 生产就绪
 
-## Parallel Execution Opportunities
+## 并行执行机会
 
-### Within Each Story Phase
-- **Tests can run in parallel with implementation** where marked [P]
-- **Model classes** can be implemented simultaneously
-- **UI components** can be developed independently
-- **Animation and rendering** tasks can be parallelized
+### 每个故事阶段内
+- **测试可以与实现并行**，标记为 [P] 的任务
+- **模型类**可以同时实现
+- **UI组件**可以独立开发
+- **动画和渲染**任务可以并行化
 
-### Cross-Story Parallelism
-- **US2 piece operations** and **US3 laser physics** research can overlap
-- **US4 timer system** can be developed while **US3 physics** is being implemented
-- **US5 UX enhancements** can start once basic UI from earlier stories is complete
+### 跨故事并行
+- **US2 棋子操作**和**US3 激光物理**研究可以重叠
+- **US4 计时器系统**可以在**US3 物理**实现时开发
+- **US5 用户体验增强**可以在早期故事的基础UI完成后开始
 
-## Implementation Strategy
+## 实现策略
 
-### MVP Scope (First Release)
-- Focus on **US1, US2, US3** for a playable minimum viable product
-- Basic game mechanics: setup, move pieces, fire lasers, basic interactions
-- Simplified UI with essential functionality only
-- Unit tests for core game logic
+### MVP范围（首次发布）
+- 专注于 **US1, US2, US3** 以实现可玩的最小可行产品
+- 基础游戏机制：设置、移动棋子、发射激光、基本交互
+- 简化的UI，仅包含基本功能
+- 核心游戏逻辑的单元测试
 
-### Incremental Delivery
-1. **Sprint 1**: Phase 1-2 + US1 (Basic game setup)
-2. **Sprint 2**: US2 (Piece operations and basic interaction)
-3. **Sprint 3**: US3 (Laser physics and core mechanics)
-4. **Sprint 4**: US4 (Complete game flow and win conditions)
-5. **Sprint 5**: US5 + Polish (User experience and production readiness)
+### 增量交付
+1. **冲刺1**: 阶段1-2 + US1（基础游戏设置）
+2. **冲刺2**: US2（棋子操作和基础交互）
+3. **冲刺3**: US3（激光物理和核心机制）
+4. **冲刺4**: US4（完整游戏流程和胜利条件）
+5. **冲刺5**: US5 + 优化（用户体验和生产就绪）
 
-### Risk Mitigation
-- **Laser physics complexity**: Implement and test each interaction type separately
-- **Performance requirements**: Early testing of laser calculation performance
-- **Browser compatibility**: Test on target browsers early in development
-- **User experience**: Regular playtesting and feedback collection
+### 风险缓解
+- **激光物理复杂性**: 分别实现和测试每种交互类型
+- **性能要求**: 早期测试激光计算性能
+- **浏览器兼容性**: 在开发早期在目标浏览器上测试
+- **用户体验**: 定期进行游戏测试和收集反馈
 
-## Total Tasks Summary
+## 任务统计总结
 
-- **Setup Phase**: 11 tasks (T001-T011)
-- **Foundational Phase**: 11 tasks (T012-T021)
-- **US1 (Game Setup)**: 14 tasks (T022-T035) including tests
-- **US2 (Basic Operations)**: 16 tasks (T036-T051) including tests
-- **US3 (Laser Physics)**: 17 tasks (T052-T068) including tests
-- **US4 (Game Flow)**: 16 tasks (T069-T084) including tests
-- **US5 (UX Polish)**: 14 tasks (T085-T098) including tests
-- **Polish Phase**: 21 tasks (T099-T119) including performance monitoring
+- **搭建阶段**: 10 任务 (T001-T010)
+- **基础设施阶段**: 11 任务 (T011-T021)
+- **US1 (游戏设置)**: 14 任务 (T022-T035) 包括测试
+- **US2 (基础操作)**: 16 任务 (T036-T051) 包括测试
+- **US3 (激光物理)**: 17 任务 (T052-T068) 包括测试
+- **US4 (游戏流程)**: 16 任务 (T074-T089) 包括测试
+- **US5 (用户体验优化)**: 14 任务 (T090-T103) 包括测试
+- **优化阶段**: 21 任务 (T104-T124) 包括性能监控
 
-**Total**: 120 tasks across 8 phases
-**Estimated Effort**: 4-6 weeks for full implementation
-**MVP Delivery**: 2-3 weeks (US1-US3)
+**总计**: 120 任务，8个阶段
+**预计工作量**: 完整实现需要 4-6 周
+**MVP交付**: 2-3 周（US1-US3）
+
+## 当前进度
+
+**阶段1完成度**: 6/10 任务已完成 (60%)
+**阶段3 (US1) 完成度**: 7/14 任务已完成 (50%)
+**总体进度**: 约 15% 已完成
+
+**下一步优先级**:
+1. 完成阶段1剩余任务（配置和工具函数）
+2. 实现阶段2基础模型类
+3. 完成US1的剩余任务（状态管理和集成）

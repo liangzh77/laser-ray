@@ -96,17 +96,17 @@ description: "激光棋游戏实现任务列表"
 - [x] T040 [US2] 在 tests/e2e/user-journey/piece-movement.test.js 中创建棋子交互端到端测试
 
 ### 实现任务 (US2)
-- [ ] T041 [US2] 在 Piece 子类中实现棋子特定的移动逻辑
-- [ ] T042 [P] [US2] 在 utils/validation.js 中实现城堡移动验证
-- [ ] T043 [P] [US2] 在 Piece.rotate() 方法中实现棋子旋转机制
-- [ ] T044 [P] [US2] 在 GameEngine.fireLaser() 中实现炮塔发射机制
-- [ ] T045 [US2] 在 StateManager.validateMove() 中实现移动验证
-- [ ] T046 [P] [US2] 在 UIController 中创建棋子选择UI
-- [ ] T047 [P] [US2] 在 BoardRenderer 中实现有效移动高亮显示
-- [ ] T048 [US2] 在 AnimationEngine 中实现移动动画
-- [ ] T049 [US2] 在 AnimationEngine 中实现旋转动画
-- [ ] T050 [US2] 在 UIController 中创建操作按钮（移动、旋转、发射激光）
-- [ ] T051 [US2] 在 GameEngine 中实现回合制操作验证
+- [x] T041 [US2] 在 Piece 子类中实现棋子特定的移动逻辑
+- [x] T042 [P] [US2] 在 utils/validation.js 中实现城堡移动验证
+- [x] T043 [P] [US2] 在 Piece.rotate() 方法中实现棋子旋转机制
+- [x] T044 [P] [US2] 在 GameEngine.fireLaser() 中实现炮塔发射机制
+- [x] T045 [US2] 在 StateManager.validateMove() 中实现移动验证
+- [x] T046 [P] [US2] 在 UIController 中创建棋子选择UI
+- [x] T047 [P] [US2] 在 BoardRenderer 中实现有效移动高亮显示
+- [x] T048 [US2] 在 AnimationEngine 中实现移动动画
+- [x] T049 [US2] 在 AnimationEngine 中实现旋转动画
+- [x] T050 [US2] 在 UIController 中创建操作按钮（移动、旋转、发射激光）
+- [x] T051 [US2] 在 GameEngine 中实现回合制操作验证
 
 ## 第五阶段：用户故事3 - 激光物理和交互系统 (P1)
 
@@ -293,10 +293,10 @@ US1 (游戏设置) → US2 (基础操作) → US3 (激光物理) → US4 (游戏
 **阶段1完成度**: 10/10 任务已完成 (100%) ✅
 **阶段2完成度**: 11/11 任务已完成 (100%) ✅
 **阶段3 (US1) 完成度**: 14/14 任务已完成 (100%) ✅
-**阶段4 (US2) 测试完成度**: 5/5 任务已完成 (100%) ✅
-**总体进度**: 40/120 任务已完成 (33%)
+**阶段4 (US2) 完成度**: 16/16 任务已完成 (100%) ✅
+**总体进度**: 51/120 任务已完成 (42.5%)
 
 **下一步优先级**:
-1. 完成阶段4（US2 - 基础棋子操作）的实现任务 (T041-T051)
-2. 实现棋子移动、旋转和激光发射的UI交互
-3. 完成基础游戏循环
+1. 开始阶段5（US3 - 激光物理和交互系统）
+2. 实现激光物理引擎和所有棋子交互逻辑
+3. 添加激光动画和视觉效果

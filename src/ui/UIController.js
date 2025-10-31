@@ -151,5 +151,77 @@ export class UIController {
   updateStatus(message) {
     // 这里应该更新DOM中的状态显示
     console.log('状态:', message);
+
+    const statusElement = document.getElementById('gameStatus');
+    if (statusElement) {
+      statusElement.textContent = message;
+    }
+  }
+
+  /**
+   * 处理旋转按钮点击
+   * @param {string} direction - 'clockwise' 或 'counterclockwise'
+   */
+  handleRotateClick(direction = 'clockwise') {
+    if (!this.selectedPiece) {
+      console.log('请先选中一个棋子');
+      return;
+    }
+
+    const result = this.gameEngine.rotatePiece(this.selectedPiece.position, direction);
+
+    if (result.success) {
+      this.deselectPiece();
+      // 旋转成功后自动结束回合
+      this.gameEngine.endTurn();
+    } else {
+      console.log('旋转失败:', result.reason);
+    }
+  }
+
+  /**
+   * 处理激光发射按钮点击
+   */
+  handleFireLaserClick() {
+    const result = this.gameEngine.fireLaser();
+
+    if (result.success) {
+      this.deselectPiece();
+      // 激光发射后自动结束回合
+      this.gameEngine.endTurn();
+    } else {
+      console.log('发射激光失败:', result.reason);
+    }
+  }
+
+  /**
+   * 更新操作按钮状态
+   */
+  updateActionButtons() {
+    const rotateBtn = document.getElementById('rotate');
+    const fireLaserBtn = document.getElementById('fireLaser');
+
+    if (rotateBtn) {
+      rotateBtn.disabled = !this.selectedPiece || !this.gameEngine.game.isPlaying();
+    }
+
+    if (fireLaserBtn) {
+      fireLaserBtn.disabled = !this.gameEngine.game.isPlaying();
+    }
+  }
+
+  /**
+   * 设置DOM事件监听器
+   */
+  setupDOMListeners() {
+    const rotateBtn = document.getElementById('rotate');
+    if (rotateBtn) {
+      rotateBtn.addEventListener('click', () => this.handleRotateClick('clockwise'));
+    }
+
+    const fireLaserBtn = document.getElementById('fireLaser');
+    if (fireLaserBtn) {
+      fireLaserBtn.addEventListener('click', () => this.handleFireLaserClick());
+    }
   }
 }

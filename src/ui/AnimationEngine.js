@@ -88,4 +88,132 @@ export class AnimationEngine {
   clear() {
     this.animations = [];
   }
+
+  /**
+   * 创建棋子移动动画
+   * @param {Object} piece - 棋子对象
+   * @param {Object} from - 起始位置 { col, row }
+   * @param {Object} to - 目标位置 { col, row }
+   * @param {Function} onUpdate - 更新回调
+   * @param {Function} onComplete - 完成回调
+   * @param {number} duration - 动画时长（毫秒）
+   */
+  animateMove(piece, from, to, onUpdate, onComplete, duration = 300) {
+    const { boardToPixel } = require('../utils/geometry.js');
+    const startPos = boardToPixel(from.col, from.row);
+    const endPos = boardToPixel(to.col, to.row);
+
+    this.addAnimation({
+      type: 'move',
+      piece,
+      duration,
+      onUpdate: (progress) => {
+        // 计算当前位置（线性插值）
+        const currentX = startPos.x + (endPos.x - startPos.x) * progress;
+        const currentY = startPos.y + (endPos.y - startPos.y) * progress;
+
+        if (onUpdate) {
+          onUpdate({ x: currentX, y: currentY }, progress);
+        }
+      },
+      onComplete
+    });
+  }
+
+  /**
+   * 创建棋子旋转动画
+   * @param {Object} piece - 棋子对象
+   * @param {string} fromDirection - 起始方向
+   * @param {string} toDirection - 目标方向
+   * @param {Function} onUpdate - 更新回调
+   * @param {Function} onComplete - 完成回调
+   * @param {number} duration - 动画时长（毫秒）
+   */
+  animateRotation(piece, fromDirection, toDirection, onUpdate, onComplete, duration = 200) {
+    // 方向到角度的映射
+    const directionAngles = {
+      up: 0,
+      right: 90,
+      down: 180,
+      left: 270
+    };
+
+    let startAngle = directionAngles[fromDirection] || 0;
+    let endAngle = directionAngles[toDirection] || 0;
+
+    // 选择最短旋转路径
+    let angleDiff = endAngle - startAngle;
+    if (angleDiff > 180) {
+      angleDiff -= 360;
+    } else if (angleDiff < -180) {
+      angleDiff += 360;
+    }
+
+    endAngle = startAngle + angleDiff;
+
+    this.addAnimation({
+      type: 'rotation',
+      piece,
+      duration,
+      onUpdate: (progress) => {
+        // 计算当前角度（线性插值）
+        const currentAngle = startAngle + (endAngle - startAngle) * progress;
+
+        if (onUpdate) {
+          onUpdate(currentAngle, progress);
+        }
+      },
+      onComplete
+    });
+  }
+
+  /**
+   * 创建激光动画
+   * @param {Array} laserPath - 激光路径点数组
+   * @param {Function} onUpdate - 更新回调
+   * @param {Function} onComplete - 完成回调
+   * @param {number} duration - 动画时长（毫秒）
+   */
+  animateLaser(laserPath, onUpdate, onComplete, duration = 500) {
+    this.addAnimation({
+      type: 'laser',
+      laserPath,
+      duration,
+      onUpdate: (progress) => {
+        // 计算当前显示到激光路径的哪个部分
+        const currentIndex = Math.floor(progress * laserPath.length);
+        const currentPath = laserPath.slice(0, currentIndex + 1);
+
+        if (onUpdate) {
+          onUpdate(currentPath, progress);
+        }
+      },
+      onComplete
+    });
+  }
+
+  /**
+   * 创建棋子摧毁动画
+   * @param {Object} piece - 棋子对象
+   * @param {Function} onUpdate - 更新回调
+   * @param {Function} onComplete - 完成回调
+   * @param {number} duration - 动画时长（毫秒）
+   */
+  animateDestroy(piece, onUpdate, onComplete, duration = 400) {
+    this.addAnimation({
+      type: 'destroy',
+      piece,
+      duration,
+      onUpdate: (progress) => {
+        // 计算淡出和缩放效果
+        const opacity = 1 - progress;
+        const scale = 1 - progress * 0.5; // 缩小到50%
+
+        if (onUpdate) {
+          onUpdate({ opacity, scale }, progress);
+        }
+      },
+      onComplete
+    });
+  }
 }

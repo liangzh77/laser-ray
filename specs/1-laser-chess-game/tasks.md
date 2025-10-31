@@ -147,11 +147,11 @@ description: "激光棋游戏实现任务列表"
 **实现策略**: 实现游戏流程控制、计时器系统和胜利条件检查
 
 ### 测试任务 (US4)
-- [ ] T074 [US4] 在 tests/unit/core/StateManager.test.js 中创建游戏状态转换单元测试
-- [ ] T075 [US4] 在 tests/unit/core/Timer.test.js 中创建计时器功能单元测试
-- [ ] T076 [US4] 在 tests/unit/core/GameEngine.test.js 中创建胜利条件检查单元测试
-- [ ] T077 [US4] 在 tests/integration/game-flow/full-game.test.js 中创建完整游戏流程集成测试
-- [ ] T078 [US4] 在 tests/e2e/user-journey/game-completion.test.js 中创建游戏完成端到端测试
+- [x] T074 [US4] 在 tests/unit/core/StateManager.test.js 中创建游戏状态转换单元测试
+- [x] T075 [US4] 在 tests/unit/core/Timer.test.js 中创建计时器功能单元测试
+- [x] T076 [US4] 在 tests/unit/core/GameEngine.test.js 中创建胜利条件检查单元测试
+- [x] T077 [US4] 在 tests/integration/game-flow/full-game.test.js 中创建完整游戏流程集成测试
+- [x] T078 [US4] 在 tests/e2e/user-journey/game-completion.test.js 中创建游戏完成端到端测试
 
 ### 实现任务 (US4)
 - [ ] T079 [US4] 在 GameEngine.switchTurn() 中实现回合管理
@@ -295,7 +295,8 @@ US1 (游戏设置) → US2 (基础操作) → US3 (激光物理) → US4 (游戏
 **阶段3 (US1) 完成度**: 14/14 任务已完成 (100%) ✅
 **阶段4 (US2) 完成度**: 16/16 任务已完成 (100%) ✅
 **阶段5 (US3) 完成度**: 22/22 任务已完成 (100%) ✅
-**总体进度**: 73/120 任务已完成 (60.8%)
+**阶段6 (US4) 完成度**: 5/16 任务已完成 (31.25%)
+**总体进度**: 78/120 任务已完成 (65.0%)
 
 **下一步优先级**:
 1. 开始阶段6（US4 - 游戏流程和胜负判定）

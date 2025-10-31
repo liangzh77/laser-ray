@@ -37,17 +37,17 @@ description: "激光棋游戏实现任务列表"
 
 **目标**: 任何用户故事开始前需要的核心基础设施
 
-- [ ] T011 在 src/models/Piece.js 中创建基础棋子类
-- [ ] T012 在 src/models/Player.js 中创建玩家模型
-- [ ] T013 在 src/models/Board.js 中创建棋盘模型
-- [ ] T014 在 src/models/Laser.js 中创建激光模型
-- [ ] T015 在 src/models/Game.js 中创建游戏模型
-- [ ] T016 在 src/core/StateManager.js 中创建状态管理器
-- [ ] T017 在 src/core/PhysicsEngine.js 中创建物理引擎基础
-- [ ] T018 在 src/core/GameEngine.js 中创建游戏引擎基础
-- [ ] T019 在 src/ui/BoardRenderer.js 中创建棋盘渲染器基础
-- [ ] T020 在 src/ui/AnimationEngine.js 中创建动画引擎基础
-- [ ] T021 在 src/ui/UIController.js 中创建UI控制器基础
+- [x] T011 在 src/models/Piece.js 中创建基础棋子类
+- [x] T012 在 src/models/Player.js 中创建玩家模型
+- [x] T013 在 src/models/Board.js 中创建棋盘模型
+- [x] T014 在 src/models/Laser.js 中创建激光模型
+- [x] T015 在 src/models/Game.js 中创建游戏模型
+- [x] T016 在 src/core/StateManager.js 中创建状态管理器
+- [x] T017 在 src/core/PhysicsEngine.js 中创建物理引擎基础
+- [x] T018 在 src/core/GameEngine.js 中创建游戏引擎基础
+- [x] T019 在 src/ui/BoardRenderer.js 中创建棋盘渲染器基础
+- [x] T020 在 src/ui/AnimationEngine.js 中创建动画引擎基础
+- [x] T021 在 src/ui/UIController.js 中创建UI控制器基础
 
 ## 第三阶段：用户故事1 - 游戏初始化和设置 (P1)
 

@@ -115,14 +115,14 @@ description: "激光棋游戏实现任务列表"
 **实现策略**: 实现激光物理引擎和所有交互类型
 
 ### 测试任务 (US3)
-- [ ] T052 [US3] 在 tests/unit/engines/PhysicsEngine.test.js 中创建激光反射单元测试
-- [ ] T053 [US3] 在 tests/unit/engines/PhysicsEngine.test.js 中创建盾牌正反面阻挡单元测试
-- [ ] T054 [US3] 在 tests/unit/engines/PhysicsEngine.test.js 中创建跳台正反面跳跃单元测试
-- [ ] T055 [US3] 在 tests/unit/engines/PhysicsEngine.test.js 中创建跳台侧面摧毁单元测试
-- [ ] T056 [US3] 在 tests/unit/engines/PhysicsEngine.test.js 中创建分光器正面和侧面分光单元测试
-- [ ] T057 [US3] 在 tests/unit/engines/PhysicsEngine.test.js 中创建分光器背面摧毁单元测试
-- [ ] T058 [US3] 在 tests/integration/physics/laser-interactions.test.js 中创建更新的激光物理集成测试
-- [ ] T059 [US3] 在 tests/e2e/user-journey/laser-physics.test.js 中创建新激光场景端到端测试
+- [x] T052 [US3] 在 tests/unit/engines/PhysicsEngine.test.js 中创建激光反射单元测试
+- [x] T053 [US3] 在 tests/unit/engines/PhysicsEngine.test.js 中创建盾牌正反面阻挡单元测试
+- [x] T054 [US3] 在 tests/unit/engines/PhysicsEngine.test.js 中创建跳台正反面跳跃单元测试
+- [x] T055 [US3] 在 tests/unit/engines/PhysicsEngine.test.js 中创建跳台侧面摧毁单元测试
+- [x] T056 [US3] 在 tests/unit/engines/PhysicsEngine.test.js 中创建分光器正面和侧面分光单元测试
+- [x] T057 [US3] 在 tests/unit/engines/PhysicsEngine.test.js 中创建分光器背面摧毁单元测试
+- [x] T058 [US3] 在 tests/integration/physics/laser-interactions.test.js 中创建更新的激光物理集成测试
+- [x] T059 [US3] 在 tests/e2e/user-journey/laser-physics.test.js 中创建新激光场景端到端测试
 
 ### 实现任务 (US3)
 - [ ] T060 [US3] 在 PhysicsEngine.calculateLaserPath() 中实现激光路径计算

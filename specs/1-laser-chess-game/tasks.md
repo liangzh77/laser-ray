@@ -125,20 +125,20 @@ description: "激光棋游戏实现任务列表"
 - [x] T059 [US3] 在 tests/e2e/user-journey/laser-physics.test.js 中创建新激光场景端到端测试
 
 ### 实现任务 (US3)
-- [ ] T060 [US3] 在 PhysicsEngine.calculateLaserPath() 中实现激光路径计算
-- [ ] T061 [P] [US3] 在 PhysicsEngine.calculateReflection() 中实现镜子反射逻辑
-- [ ] T062 [P] [US3] 在 PhysicsEngine.calculateBlock() 中实现盾牌正反面阻挡
-- [ ] T063 [P] [US3] 在 PhysicsEngine.calculateShieldDestruction() 中实现盾牌侧面摧毁
-- [ ] T064 [P] [US3] 在 PhysicsEngine.calculateTurretHit() 中实现炮塔摧毁逻辑
-- [ ] T065 [P] [US3] 在 PhysicsEngine.calculateJump() 中实现跳台正反面跳跃
-- [ ] T066 [P] [US3] 在 PhysicsEngine.calculateJumperDestruction() 中实现跳台侧面摧毁
-- [ ] T067 [P] [US3] 在 PhysicsEngine.calculateSplit() 中实现分光器正面和侧面分光
-- [ ] T068 [P] [US3] 在 PhysicsEngine.calculateSplitterDestruction() 中实现分光器背面摧毁
-- [ ] T069 [US3] 在 PhysicsEngine.validateInteraction() 中实现激光交互验证
-- [ ] T070 [P] [US3] 在 BoardRenderer 中创建激光渲染
-- [ ] T071 [US3] 在 AnimationEngine 中实现激光动画
-- [ ] T072 [US3] 在 AnimationEngine 中实现棋子摧毁效果
-- [ ] T073 [US3] 创建棋子特定交互类（Mirror, Shield, Turret, Jumper, Splitter）
+- [x] T060 [US3] 在 PhysicsEngine.calculateLaserPath() 中实现激光路径计算
+- [x] T061 [P] [US3] 在 geometry.js/calculateReflection() 中实现镜子反射逻辑
+- [x] T062 [P] [US3] 在 geometry.js/calculateShieldInteraction() 中实现盾牌正反面阻挡
+- [x] T063 [P] [US3] 在 geometry.js/calculateShieldInteraction() 中实现盾牌侧面摧毁
+- [x] T064 [P] [US3] 在 Piece.js/Turret.handleLaserInteraction() 中实现炮塔摧毁逻辑
+- [x] T065 [P] [US3] 在 geometry.js/calculateJump() 中实现跳台正反面跳跃
+- [x] T066 [P] [US3] 在 geometry.js/calculateJump() 中实现跳台侧面摧毁
+- [x] T067 [P] [US3] 在 geometry.js/calculateSplit() 中实现分光器正面和侧面分光
+- [x] T068 [P] [US3] 在 Piece.js/Splitter.handleLaserInteraction() 中实现分光器背面摧毁
+- [x] T069 [US3] 在 PhysicsEngine.handleLaserInteraction() 中实现激光交互验证
+- [x] T070 [P] [US3] 在 BoardRenderer 中创建激光渲染（drawLaser, drawLaserAnimated）
+- [x] T071 [US3] 在 AnimationEngine 中实现激光动画（animateLaser）
+- [x] T072 [US3] 在 AnimationEngine 中实现棋子摧毁效果（animateDestroy）
+- [x] T073 [US3] 创建棋子特定交互类（Mirror, Shield, Turret, Jumper, Splitter）
 
 ## 第六阶段：用户故事4 - 游戏流程和胜负判定 (P1)
 
@@ -294,9 +294,10 @@ US1 (游戏设置) → US2 (基础操作) → US3 (激光物理) → US4 (游戏
 **阶段2完成度**: 11/11 任务已完成 (100%) ✅
 **阶段3 (US1) 完成度**: 14/14 任务已完成 (100%) ✅
 **阶段4 (US2) 完成度**: 16/16 任务已完成 (100%) ✅
-**总体进度**: 51/120 任务已完成 (42.5%)
+**阶段5 (US3) 完成度**: 22/22 任务已完成 (100%) ✅
+**总体进度**: 73/120 任务已完成 (60.8%)
 
 **下一步优先级**:
-1. 开始阶段5（US3 - 激光物理和交互系统）
-2. 实现激光物理引擎和所有棋子交互逻辑
-3. 添加激光动画和视觉效果
+1. 开始阶段6（US4 - 游戏流程和胜负判定）
+2. 实现回合管理、计时器系统和胜利条件
+3. 添加游戏状态显示和结束画面

@@ -290,4 +290,200 @@ export class BoardRenderer {
       );
     });
   }
+
+  /**
+   * 绘制激光路径
+   * @param {LaserBeam} laserBeam - 激光束集合
+   * @param {Object} options - 绘制选项
+   */
+  drawLaser(laserBeam, options = {}) {
+    const {
+      color = 'rgba(255, 0, 0, 0.8)',
+      width = 3,
+      glowIntensity = 0.5
+    } = options;
+
+    const { ctx } = this;
+    const allLasers = laserBeam.getAllLasers();
+
+    ctx.save();
+
+    // 为每条激光绘制路径
+    allLasers.forEach(laser => {
+      const path = laser.getPath();
+
+      if (path.length < 2) return;
+
+      // 绘制发光效果
+      if (glowIntensity > 0) {
+        this.drawLaserGlow(path, color, width, glowIntensity);
+      }
+
+      // 绘制主激光线
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      ctx.beginPath();
+
+      // 转换第一个点为像素坐标
+      const { boardToPixel } = require('../utils/geometry.js');
+      const start = boardToPixel(path[0].col, path[0].row);
+      ctx.moveTo(start.x, start.y);
+
+      // 绘制路径
+      for (let i = 1; i < path.length; i++) {
+        const point = boardToPixel(path[i].col, path[i].row);
+        ctx.lineTo(point.x, point.y);
+      }
+
+      ctx.stroke();
+
+      // 在激光末端绘制箭头或终点标记
+      if (path.length >= 2) {
+        const lastPoint = path[path.length - 1];
+        const secondLastPoint = path[path.length - 2];
+        this.drawLaserEnd(secondLastPoint, lastPoint, color, width);
+      }
+    });
+
+    ctx.restore();
+  }
+
+  /**
+   * 绘制激光发光效果
+   * @private
+   */
+  drawLaserGlow(path, color, width, intensity) {
+    const { ctx } = this;
+    const { boardToPixel } = require('../utils/geometry.js');
+
+    // 绘制多层发光效果
+    const glowLayers = 3;
+
+    for (let layer = glowLayers; layer > 0; layer--) {
+      const glowWidth = width + layer * 4;
+      const alpha = (intensity / glowLayers) * (glowLayers - layer + 1) / glowLayers;
+
+      ctx.strokeStyle = color.replace(/[\d.]+\)$/, `${alpha})`);
+      ctx.lineWidth = glowWidth;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      ctx.beginPath();
+
+      const start = boardToPixel(path[0].col, path[0].row);
+      ctx.moveTo(start.x, start.y);
+
+      for (let i = 1; i < path.length; i++) {
+        const point = boardToPixel(path[i].col, path[i].row);
+        ctx.lineTo(point.x, point.y);
+      }
+
+      ctx.stroke();
+    }
+  }
+
+  /**
+   * 绘制激光终点
+   * @private
+   */
+  drawLaserEnd(from, to, color, width) {
+    const { ctx } = this;
+    const { boardToPixel } = require('../utils/geometry.js');
+
+    const toPoint = boardToPixel(to.col, to.row);
+
+    // 绘制脉冲圆圈
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(toPoint.x, toPoint.y, width + 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 绘制外围光晕
+    const gradient = ctx.createRadialGradient(
+      toPoint.x, toPoint.y, 0,
+      toPoint.x, toPoint.y, width + 6
+    );
+    gradient.addColorStop(0, color);
+    gradient.addColorStop(1, color.replace(/[\d.]+\)$/, '0)'));
+
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(toPoint.x, toPoint.y, width + 6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  /**
+   * 绘制激光动画帧
+   * @param {LaserBeam} laserBeam - 激光束集合
+   * @param {number} progress - 动画进度（0-1）
+   * @param {Object} options - 绘制选项
+   */
+  drawLaserAnimated(laserBeam, progress, options = {}) {
+    const {
+      color = 'rgba(255, 0, 0, 0.8)',
+      width = 3,
+      speed = 1.5
+    } = options;
+
+    const { ctx } = this;
+    const { boardToPixel } = require('../utils/geometry.js');
+    const allLasers = laserBeam.getAllLasers();
+
+    ctx.save();
+
+    allLasers.forEach(laser => {
+      const path = laser.getPath();
+
+      if (path.length < 2) return;
+
+      // 计算当前应该绘制到路径的哪个部分
+      const totalLength = path.length - 1;
+      const currentLength = totalLength * progress * speed;
+
+      if (currentLength < 1) return;
+
+      // 绘制激光路径（渐进式）
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      ctx.beginPath();
+
+      const start = boardToPixel(path[0].col, path[0].row);
+      ctx.moveTo(start.x, start.y);
+
+      const endIndex = Math.min(Math.floor(currentLength) + 1, path.length - 1);
+
+      for (let i = 1; i <= endIndex; i++) {
+        const point = boardToPixel(path[i].col, path[i].row);
+        ctx.lineTo(point.x, point.y);
+      }
+
+      ctx.stroke();
+
+      // 绘制前进中的激光头部
+      if (endIndex < path.length - 1) {
+        const headPoint = boardToPixel(path[endIndex].col, path[endIndex].row);
+
+        // 发光效果
+        const gradient = ctx.createRadialGradient(
+          headPoint.x, headPoint.y, 0,
+          headPoint.x, headPoint.y, width + 8
+        );
+        gradient.addColorStop(0, color);
+        gradient.addColorStop(1, color.replace(/[\d.]+\)$/, '0)'));
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(headPoint.x, headPoint.y, width + 8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+
+    ctx.restore();
+  }
 }

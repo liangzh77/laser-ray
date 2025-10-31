@@ -28,10 +28,10 @@ description: "激光棋游戏实现任务列表"
 - [x] T004 [P] 在 public/css/style.css 中创建 CSS 基础样式
 - [x] T005 [P] 在 public/js/main.js 中创建基础 JavaScript 入口
 - [x] T006 [P] 创建测试配置文件（playwright.config.js）
-- [ ] T007 [P] 在 src/config/game-config.js 中创建游戏配置对象
-- [ ] T008 在 src/utils/geometry.js 中创建几何计算工具函数
-- [ ] T009 在 src/utils/validation.js 中创建验证工具函数
-- [ ] T010 在 src/core/EventBus.js 中创建事件总线系统
+- [x] T007 [P] 在 src/config/game-config.js 中创建游戏配置对象
+- [x] T008 在 src/utils/geometry.js 中创建几何计算工具函数
+- [x] T009 在 src/utils/validation.js 中创建验证工具函数
+- [x] T010 在 src/core/EventBus.js 中创建事件总线系统
 
 ## 第二阶段：基础设施（必需的前置条件）
 

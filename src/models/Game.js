@@ -148,6 +148,13 @@ export class Game {
   }
 
   /**
+   * 清空当前操作（结束回合时调用）
+   */
+  clearCurrentOperation() {
+    this.currentOperation = null;
+  }
+
+  /**
    * 检查当前回合是否已执行操作
    * @returns {boolean}
    */

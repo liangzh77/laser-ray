@@ -154,17 +154,17 @@ description: "激光棋游戏实现任务列表"
 - [x] T078 [US4] 在 tests/e2e/user-journey/game-completion.test.js 中创建游戏完成端到端测试
 
 ### 实现任务 (US4)
-- [ ] T079 [US4] 在 GameEngine.switchTurn() 中实现回合管理
-- [ ] T080 [P] [US4] 在 core/Timer.js 中创建计时器系统
-- [ ] T081 [P] [US4] 在 GameEngine.handleTimeExpired() 中实现时间耗尽处理
-- [ ] T082 [US4] 在 GameEngine.checkWinCondition() 中实现胜利条件检查
-- [ ] T083 [P] [US4] 在 StateManager 中实现游戏结束状态管理
-- [ ] T084 [US4] 在 UIController 中创建计时器显示
-- [ ] T085 [P] [US4] 在 UIController 中创建游戏状态显示
-- [ ] T086 [US4] 在 UIController 中实现游戏结束画面
-- [ ] T087 [P] [US4] 在 GameEngine 中创建重新开始功能
-- [ ] T088 [US4] 在 UIController 中实现主菜单导航
-- [ ] T089 [US4] 在 GameEngine 中创建移动历史记录跟踪
+- [x] T079 [US4] 在 GameEngine.switchTurn() 中实现回合管理
+- [x] T080 [P] [US4] 在 core/Timer.js 中创建计时器系统
+- [x] T081 [P] [US4] 在 GameEngine.handleTimeExpired() 中实现时间耗尽处理
+- [x] T082 [US4] 在 GameEngine.checkWinCondition() 中实现胜利条件检查
+- [x] T083 [P] [US4] 在 StateManager 中实现游戏结束状态管理
+- [x] T084 [US4] 在 UIController 中创建计时器显示
+- [x] T085 [P] [US4] 在 UIController 中创建游戏状态显示
+- [x] T086 [US4] 在 UIController 中实现游戏结束画面
+- [x] T087 [P] [US4] 在 GameEngine 中创建重新开始功能
+- [x] T088 [US4] 在 UIController 中实现主菜单导航
+- [x] T089 [US4] 在 GameEngine 中创建移动历史记录跟踪
 
 ## 第七阶段：用户故事5 - 界面交互和用户体验 (P2)
 
@@ -295,8 +295,8 @@ US1 (游戏设置) → US2 (基础操作) → US3 (激光物理) → US4 (游戏
 **阶段3 (US1) 完成度**: 14/14 任务已完成 (100%) ✅
 **阶段4 (US2) 完成度**: 16/16 任务已完成 (100%) ✅
 **阶段5 (US3) 完成度**: 22/22 任务已完成 (100%) ✅
-**阶段6 (US4) 完成度**: 5/16 任务已完成 (31.25%)
-**总体进度**: 78/120 任务已完成 (65.0%)
+**阶段6 (US4) 完成度**: 16/16 任务已完成 (100%) ✅
+**总体进度**: 89/120 任务已完成 (74.2%)
 
 **下一步优先级**:
 1. 开始阶段6（US4 - 游戏流程和胜负判定）

@@ -13,6 +13,9 @@ export class UIController {
     this.selectedPiece = null;
     this.validMoves = [];
 
+    // 计时器更新间隔ID
+    this.timerIntervalId = null;
+
     this.setupEventListeners();
   }
 
@@ -214,14 +217,329 @@ export class UIController {
    * 设置DOM事件监听器
    */
   setupDOMListeners() {
-    const rotateBtn = document.getElementById('rotate');
+    const rotateBtn = document.getElementById('rotate-btn');
     if (rotateBtn) {
       rotateBtn.addEventListener('click', () => this.handleRotateClick('clockwise'));
     }
 
-    const fireLaserBtn = document.getElementById('fireLaser');
+    const fireLaserBtn = document.getElementById('fire-laser-btn');
     if (fireLaserBtn) {
       fireLaserBtn.addEventListener('click', () => this.handleFireLaserClick());
     }
+
+    const restartBtn = document.getElementById('restart-btn');
+    if (restartBtn) {
+      restartBtn.addEventListener('click', () => this.handleRestartClick());
+    }
+
+    const menuBtn = document.getElementById('menu-btn');
+    if (menuBtn) {
+      menuBtn.addEventListener('click', () => this.handleReturnToMenuClick());
+    }
+
+    const playAgainBtn = document.getElementById('play-again-btn');
+    if (playAgainBtn) {
+      playAgainBtn.addEventListener('click', () => this.handlePlayAgainClick());
+    }
+
+    const backToMenuBtn = document.getElementById('back-to-menu-btn');
+    if (backToMenuBtn) {
+      backToMenuBtn.addEventListener('click', () => this.handleReturnToMenuClick());
+    }
+
+    const pauseBtn = document.getElementById('pause-btn');
+    if (pauseBtn) {
+      pauseBtn.addEventListener('click', () => this.handlePauseClick());
+    }
+  }
+
+  // ============ US4: 游戏流程和胜负判定 UI功能 ============
+
+  /**
+   * T084: 创建计时器显示
+   * 启动计时器更新
+   */
+  startTimerUpdate() {
+    // 停止之前的计时器
+    this.stopTimerUpdate();
+
+    // 立即更新一次
+    this.updateTimerDisplay();
+
+    // 每100ms更新一次计时器显示
+    this.timerIntervalId = setInterval(() => {
+      this.updateTimerDisplay();
+      this.updatePlayerTime();
+    }, 100);
+  }
+
+  /**
+   * T084: 停止计时器更新
+   */
+  stopTimerUpdate() {
+    if (this.timerIntervalId) {
+      clearInterval(this.timerIntervalId);
+      this.timerIntervalId = null;
+    }
+  }
+
+  /**
+   * T084: 更新计时器显示
+   */
+  updateTimerDisplay() {
+    const whitePlayer = this.gameEngine.game.getPlayerById('white');
+    const blackPlayer = this.gameEngine.game.getPlayerById('black');
+
+    const whiteTimeEl = document.getElementById('white-time');
+    const blackTimeEl = document.getElementById('black-time');
+
+    if (whiteTimeEl && whitePlayer) {
+      whiteTimeEl.textContent = whitePlayer.getFormattedTime();
+    }
+
+    if (blackTimeEl && blackPlayer) {
+      blackTimeEl.textContent = blackPlayer.getFormattedTime();
+    }
+  }
+
+  /**
+   * T084: 更新当前玩家的时间（递减）
+   */
+  updatePlayerTime() {
+    if (!this.gameEngine.game.isPlaying()) {
+      return;
+    }
+
+    const currentPlayer = this.gameEngine.game.getCurrentPlayer();
+    if (currentPlayer && currentPlayer.timeLeft !== Infinity) {
+      this.gameEngine.updatePlayerTime(currentPlayer.id, 100); // 减少100ms
+    }
+  }
+
+  /**
+   * T085: 更新游戏状态显示
+   */
+  updateGameStatus() {
+    const game = this.gameEngine.game;
+    const currentPlayer = game.getCurrentPlayer();
+
+    // 更新当前回合指示器
+    const currentTurnEl = document.getElementById('current-turn');
+    if (currentTurnEl) {
+      const playerName = currentPlayer.id === 'white' ? '白方' : '黑方';
+      currentTurnEl.textContent = `${playerName}回合`;
+    }
+
+    // 更新回合数
+    const turnCountEl = document.getElementById('turn-count');
+    if (turnCountEl) {
+      turnCountEl.textContent = Math.floor(game.currentMoveNumber / 2) + 1;
+    }
+
+    // 更新移动次数
+    const moveCountEl = document.getElementById('move-count');
+    if (moveCountEl) {
+      moveCountEl.textContent = game.moveHistory.length;
+    }
+
+    // 更新激光发射次数
+    const laserCountEl = document.getElementById('laser-count');
+    if (laserCountEl) {
+      const laserMoves = game.moveHistory.filter(m => m.type === 'fireLaser');
+      laserCountEl.textContent = laserMoves.length;
+    }
+
+    // 更新游戏模式
+    const gameModeEl = document.getElementById('game-mode');
+    if (gameModeEl) {
+      gameModeEl.textContent = game.settings.timeMode;
+    }
+
+    // 更新玩家状态指示器
+    const whiteStatusEl = document.getElementById('white-status');
+    const blackStatusEl = document.getElementById('black-status');
+
+    if (whiteStatusEl) {
+      whiteStatusEl.textContent = currentPlayer.id === 'white' ? '进行中' : '等待中';
+    }
+
+    if (blackStatusEl) {
+      blackStatusEl.textContent = currentPlayer.id === 'black' ? '进行中' : '等待中';
+    }
+  }
+
+  /**
+   * T086: 显示游戏结束画面
+   */
+  showGameOverScreen() {
+    const game = this.gameEngine.game;
+
+    // 停止计时器
+    this.stopTimerUpdate();
+
+    // 隐藏游戏界面
+    const gameScreen = document.getElementById('game-screen');
+    if (gameScreen) {
+      gameScreen.classList.remove('active');
+    }
+
+    // 显示游戏结束界面
+    const gameOverScreen = document.getElementById('game-over-screen');
+    if (gameOverScreen) {
+      gameOverScreen.classList.add('active');
+    }
+
+    // 更新获胜者信息
+    const winnerIcon = document.getElementById('winner-icon');
+    const winnerText = document.getElementById('winner-text');
+    const winReason = document.getElementById('win-reason');
+
+    if (winnerIcon && winnerText && winReason) {
+      const winnerName = game.winner === 'white' ? '白方' : '黑方';
+      winnerIcon.textContent = game.winner === 'white' ? '♔' : '♚';
+      winnerText.textContent = `${winnerName}获胜！`;
+
+      // 翻译获胜原因
+      let reasonText = game.winReason;
+      if (game.winReason === 'turret_destroyed') {
+        reasonText = '激光炮塔被摧毁';
+      } else if (game.winReason.includes('时间')) {
+        reasonText = '对手时间耗尽';
+      }
+
+      winReason.textContent = reasonText;
+    }
+
+    // 更新游戏统计
+    const finalMoves = document.getElementById('final-moves');
+    const finalTime = document.getElementById('final-time');
+    const finalLasers = document.getElementById('final-lasers');
+
+    if (finalMoves) {
+      finalMoves.textContent = game.moveHistory.length;
+    }
+
+    if (finalTime) {
+      finalTime.textContent = game.getFormattedDuration();
+    }
+
+    if (finalLasers) {
+      const laserCount = game.moveHistory.filter(m => m.type === 'fireLaser').length;
+      finalLasers.textContent = laserCount;
+    }
+  }
+
+  /**
+   * T088: 返回主菜单
+   */
+  handleReturnToMenuClick() {
+    // 停止计时器
+    this.stopTimerUpdate();
+
+    // 隐藏游戏界面和游戏结束界面
+    const gameScreen = document.getElementById('game-screen');
+    const gameOverScreen = document.getElementById('game-over-screen');
+    const mainMenu = document.getElementById('main-menu');
+
+    if (gameScreen) {
+      gameScreen.classList.remove('active');
+    }
+
+    if (gameOverScreen) {
+      gameOverScreen.classList.remove('active');
+    }
+
+    if (mainMenu) {
+      mainMenu.classList.add('active');
+    }
+
+    // 重置游戏
+    this.gameEngine.game.reset();
+  }
+
+  /**
+   * T087: 重新开始游戏
+   */
+  handleRestartClick() {
+    if (confirm('确定要重新开始游戏吗？')) {
+      this.gameEngine.restartGame();
+      this.startTimerUpdate();
+      this.updateGameStatus();
+      this.render();
+    }
+  }
+
+  /**
+   * T086: 再来一局（从游戏结束界面）
+   */
+  handlePlayAgainClick() {
+    // 隐藏游戏结束界面
+    const gameOverScreen = document.getElementById('game-over-screen');
+    if (gameOverScreen) {
+      gameOverScreen.classList.remove('active');
+    }
+
+    // 显示游戏界面
+    const gameScreen = document.getElementById('game-screen');
+    if (gameScreen) {
+      gameScreen.classList.add('active');
+    }
+
+    // 重新开始游戏
+    this.gameEngine.restartGame();
+    this.startTimerUpdate();
+    this.updateGameStatus();
+    this.render();
+  }
+
+  /**
+   * 暂停/恢复游戏
+   */
+  handlePauseClick() {
+    const pauseBtn = document.getElementById('pause-btn');
+    if (!pauseBtn) return;
+
+    if (this.timerIntervalId) {
+      // 当前正在运行，暂停
+      this.stopTimerUpdate();
+      pauseBtn.querySelector('.btn-icon').textContent = '▶';
+      pauseBtn.lastChild.textContent = '继续';
+    } else {
+      // 当前已暂停，恢复
+      this.startTimerUpdate();
+      pauseBtn.querySelector('.btn-icon').textContent = '⏸';
+      pauseBtn.lastChild.textContent = '暂停';
+    }
+  }
+
+  /**
+   * 扩展游戏开始事件处理
+   * @override
+   */
+  onGameStarted() {
+    this.render();
+    this.startTimerUpdate();
+    this.updateGameStatus();
+    this.updateStatus('游戏开始！白方先手');
+  }
+
+  /**
+   * 扩展游戏结束事件处理
+   * @override
+   */
+  onGameEnded(data) {
+    const winner = data.winner === 'white' ? '白方' : '黑方';
+    this.updateStatus(`游戏结束！${winner}获胜 - ${data.reason}`);
+    this.showGameOverScreen();
+  }
+
+  /**
+   * 扩展回合开始事件处理
+   * @override
+   */
+  onTurnStarted(data) {
+    const player = data.player === 'white' ? '白方' : '黑方';
+    this.updateStatus(`${player}的回合`);
+    this.updateGameStatus();
   }
 }

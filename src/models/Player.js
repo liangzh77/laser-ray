@@ -47,6 +47,13 @@ export class Player {
   }
 
   /**
+   * 增加时间增量（addTimeIncrement的别名，用于Timer兼容）
+   */
+  addIncrement() {
+    this.addTimeIncrement();
+  }
+
+  /**
    * 检查时间是否用尽
    * @returns {boolean}
    */

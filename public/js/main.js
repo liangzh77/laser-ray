@@ -130,44 +130,44 @@ class LaserChessUI {
         const cellSize = this.cellSize;
 
         // 按照你指定的初始位置摆放棋子
-        // 白方棋子（第1-2排，row 0-1）
+        // 白方棋子（第1-2行在棋盘底部，Canvas row 6-5）
         const whitePieces = [
-            // 第1排 (row 0): 从左到右
-            { row: 0, col: 0, type: 'jumper', direction: 'vertical' },
-            { row: 0, col: 1, type: 'splitter', direction: 'left' },
-            { row: 0, col: 2, type: 'shield', direction: 'vertical' },
-            { row: 0, col: 3, type: 'turret', direction: 'up' },
-            { row: 0, col: 4, type: 'shield', direction: 'vertical' },
-            { row: 0, col: 5, type: 'splitter', direction: 'right' },
-            { row: 0, col: 6, type: 'jumper', direction: 'vertical' },
-            // 第2排 (row 1): abc三个朝右上的镜子，d横向的盾，efg三个朝左上的镜子
-            { row: 1, col: 0, type: 'mirror', direction: 'up-right' },
-            { row: 1, col: 1, type: 'mirror', direction: 'up-right' },
-            { row: 1, col: 2, type: 'mirror', direction: 'up-right' },
-            { row: 1, col: 3, type: 'shield', direction: 'horizontal' },
-            { row: 1, col: 4, type: 'mirror', direction: 'up-left' },
-            { row: 1, col: 5, type: 'mirror', direction: 'up-left' },
-            { row: 1, col: 6, type: 'mirror', direction: 'up-left' }
+            // 第1行 (row 6，棋盘底部): a跳台↑, b分光器←, c盾牌←, d炮塔↑, e盾牌→, f分光器→, g跳台↑
+            { row: 6, col: 0, type: 'jumper', direction: 'up' },
+            { row: 6, col: 1, type: 'splitter', direction: 'left' },
+            { row: 6, col: 2, type: 'shield', direction: 'left' },
+            { row: 6, col: 3, type: 'turret', direction: 'up' },
+            { row: 6, col: 4, type: 'shield', direction: 'right' },
+            { row: 6, col: 5, type: 'splitter', direction: 'right' },
+            { row: 6, col: 6, type: 'jumper', direction: 'up' },
+            // 第2行 (row 5): abc镜子←, d盾牌↑, efg镜子↑
+            { row: 5, col: 0, type: 'mirror', direction: 'left' },
+            { row: 5, col: 1, type: 'mirror', direction: 'left' },
+            { row: 5, col: 2, type: 'mirror', direction: 'left' },
+            { row: 5, col: 3, type: 'shield', direction: 'up' },
+            { row: 5, col: 4, type: 'mirror', direction: 'up' },
+            { row: 5, col: 5, type: 'mirror', direction: 'up' },
+            { row: 5, col: 6, type: 'mirror', direction: 'up' }
         ];
 
-        // 黑方棋子（第6-7排，row 5-6）- 镜像对称布局
+        // 黑方棋子（第6-7行在棋盘顶部，Canvas row 1-0）
         const blackPieces = [
-            // 第7排 (row 6): 从左到右（镜像）
-            { row: 6, col: 0, type: 'jumper', direction: 'vertical' },
-            { row: 6, col: 1, type: 'splitter', direction: 'right' },
-            { row: 6, col: 2, type: 'shield', direction: 'vertical' },
-            { row: 6, col: 3, type: 'turret', direction: 'down' },
-            { row: 6, col: 4, type: 'shield', direction: 'vertical' },
-            { row: 6, col: 5, type: 'splitter', direction: 'left' },
-            { row: 6, col: 6, type: 'jumper', direction: 'vertical' },
-            // 第6排 (row 5): abc三个朝左下的镜子，d横向的盾，efg三个朝右下的镜子
-            { row: 5, col: 0, type: 'mirror', direction: 'down-left' },
-            { row: 5, col: 1, type: 'mirror', direction: 'down-left' },
-            { row: 5, col: 2, type: 'mirror', direction: 'down-left' },
-            { row: 5, col: 3, type: 'shield', direction: 'horizontal' },
-            { row: 5, col: 4, type: 'mirror', direction: 'down-right' },
-            { row: 5, col: 5, type: 'mirror', direction: 'down-right' },
-            { row: 5, col: 6, type: 'mirror', direction: 'down-right' }
+            // 第7行 (row 0，棋盘顶部): a跳台↓, b分光器←, c盾牌←, d炮塔↓, e盾牌→, f分光器→, g跳台↓
+            { row: 0, col: 0, type: 'jumper', direction: 'down' },
+            { row: 0, col: 1, type: 'splitter', direction: 'left' },
+            { row: 0, col: 2, type: 'shield', direction: 'left' },
+            { row: 0, col: 3, type: 'turret', direction: 'down' },
+            { row: 0, col: 4, type: 'shield', direction: 'right' },
+            { row: 0, col: 5, type: 'splitter', direction: 'right' },
+            { row: 0, col: 6, type: 'jumper', direction: 'down' },
+            // 第6行 (row 1): abc镜子↓, d盾牌↑, efg镜子→
+            { row: 1, col: 0, type: 'mirror', direction: 'down' },
+            { row: 1, col: 1, type: 'mirror', direction: 'down' },
+            { row: 1, col: 2, type: 'mirror', direction: 'down' },
+            { row: 1, col: 3, type: 'shield', direction: 'up' },
+            { row: 1, col: 4, type: 'mirror', direction: 'right' },
+            { row: 1, col: 5, type: 'mirror', direction: 'right' },
+            { row: 1, col: 6, type: 'mirror', direction: 'right' }
         ];
 
         // 绘制白方棋子
@@ -213,9 +213,9 @@ class LaserChessUI {
     drawTurret(x, y, radius, color, direction) {
         const ctx = this.canvasContext;
 
-        // 绘制底座（翻转颜色方案）
-        ctx.fillStyle = color === 'white' ? '#1e293b' : '#f8fafc';
-        ctx.strokeStyle = color === 'white' ? '#f8fafc' : '#1e293b';
+        // 绘制底座（白方用浅色，黑方用深色）
+        ctx.fillStyle = color === 'white' ? '#f8fafc' : '#1e293b';
+        ctx.strokeStyle = color === 'white' ? '#1e293b' : '#f8fafc';
         ctx.lineWidth = 3;
 
         ctx.beginPath();
@@ -226,15 +226,15 @@ class LaserChessUI {
         // 绘制激光炮塔（方形基座 + 突出炮口设计）
         ctx.save();
         ctx.translate(x, y);
-        this.rotateForDirection(ctx, direction);
+        this.rotateForDirection(ctx, direction, 'turret');
 
         const baseSize = radius * 0.7;
         const barrelLength = radius * 0.9;
         const barrelWidth = radius * 0.2;
 
         // 绘制方形基座（黑白图案）
-        ctx.fillStyle = color === 'white' ? '#000000' : '#ffffff';
-        ctx.strokeStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.fillStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.strokeStyle = color === 'white' ? '#000000' : '#ffffff';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.rect(-baseSize, -baseSize, baseSize * 2, baseSize * 2);
@@ -242,40 +242,43 @@ class LaserChessUI {
         ctx.stroke();
 
         // 添加基座细节 - 黑白图案
-        ctx.strokeStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.strokeStyle = color === 'white' ? '#000000' : '#ffffff';
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.rect(-baseSize + 4, -baseSize + 4, baseSize * 2 - 8, baseSize * 2 - 8);
         ctx.stroke();
 
-        // 绘制炮口（画在炮台上，黑白图案）
-        ctx.fillStyle = color === 'white' ? '#000000' : '#ffffff';
-        ctx.strokeStyle = color === 'white' ? '#ffffff' : '#000000';
+        // 绘制炮口（从中心画出去，更明显，黑白图案）
+        ctx.fillStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.strokeStyle = color === 'white' ? '#000000' : '#ffffff';
         ctx.lineWidth = 2;
 
         ctx.beginPath();
-        // 炮口基部（画在炮台上）
-        ctx.moveTo(-barrelWidth * 0.8, -baseSize + 2);
-        ctx.lineTo(-barrelWidth * 0.6, -baseSize + 2);
-        ctx.lineTo(barrelWidth * 0.6, -baseSize + 2);
-        ctx.lineTo(barrelWidth * 0.8, -baseSize + 2);
+        // 炮口从中心开始，向负Y方向（向上）延伸
+        ctx.moveTo(-barrelWidth * 0.5, 0);
+        ctx.lineTo(-barrelWidth * 0.8, -barrelLength * 0.3);
+        ctx.lineTo(-barrelWidth * 0.6, -barrelLength * 0.7);
+        ctx.lineTo(-barrelWidth * 0.3, -barrelLength);
+        ctx.lineTo(0, -barrelLength * 1.2);
+        ctx.lineTo(barrelWidth * 0.3, -barrelLength);
+        ctx.lineTo(barrelWidth * 0.6, -barrelLength * 0.7);
+        ctx.lineTo(barrelWidth * 0.8, -barrelLength * 0.3);
+        ctx.lineTo(barrelWidth * 0.5, 0);
         ctx.closePath();
         ctx.fill();
         ctx.stroke();
 
-        // 炮口尖端（突出部分）
+        // 添加炮口内部细节线
+        ctx.strokeStyle = color === 'white' ? '#000000' : '#ffffff';
+        ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(-barrelWidth * 0.6, -baseSize + 2);
-        ctx.lineTo(-barrelWidth * 0.4, -baseSize - barrelLength * 0.5);
-        ctx.lineTo(0, -baseSize - barrelLength);
-        ctx.lineTo(barrelWidth * 0.4, -baseSize - barrelLength * 0.5);
-        ctx.lineTo(barrelWidth * 0.6, -baseSize + 2);
-        ctx.closePath();
-        ctx.fill();
+        ctx.moveTo(-barrelWidth * 0.3, 0);
+        ctx.lineTo(0, -barrelLength * 0.9);
+        ctx.lineTo(barrelWidth * 0.3, 0);
         ctx.stroke();
 
         // 添加能量指示器 - 黑白图案
-        ctx.strokeStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.strokeStyle = color === 'white' ? '#000000' : '#ffffff';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.arc(0, 0, baseSize + 6, 0, Math.PI * 2);
@@ -293,9 +296,9 @@ class LaserChessUI {
     drawMirror(x, y, radius, color, direction) {
         const ctx = this.canvasContext;
 
-        // 绘制底座（翻转颜色方案）
-        ctx.fillStyle = color === 'white' ? '#1e293b' : '#f8fafc';
-        ctx.strokeStyle = color === 'white' ? '#f8fafc' : '#1e293b';
+        // 绘制底座（白方用浅色，黑方用深色）
+        ctx.fillStyle = color === 'white' ? '#f8fafc' : '#1e293b';
+        ctx.strokeStyle = color === 'white' ? '#1e293b' : '#f8fafc';
         ctx.lineWidth = 3;
 
         ctx.beginPath();
@@ -303,18 +306,21 @@ class LaserChessUI {
         ctx.fill();
         ctx.stroke();
 
-        // 绘制镜子（45度镜面设计）
+        // 绘制镜子（45度镜面设计,根据方向旋转）
         ctx.save();
         ctx.translate(x, y);
-        // 修正：镜子不需要额外旋转，保持固定的45度角
-        // 方向只影响激光交互，不影响镜面视觉角度
+
+        // 根据方向旋转镜子
+        // 基础镜面是从左上到右下的45度斜线
+        // up: 镜面朝右上, right: 镜面朝右下, down: 镜面朝左下, left: 镜面朝左上
+        this.rotateForDirection(ctx, direction, 'mirror');
 
         const mirrorLength = radius * 1.2; // 镜面长度，从左上到右下
         const mirrorThickness = radius * 0.15; // 镜面厚度
 
         // 绘制镜面背面（弧形）- 黑白图案
-        ctx.fillStyle = color === 'white' ? '#000000' : '#ffffff';
-        ctx.strokeStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.fillStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.strokeStyle = color === 'white' ? '#000000' : '#ffffff';
         ctx.lineWidth = 2;
 
         ctx.beginPath();
@@ -328,7 +334,7 @@ class LaserChessUI {
         ctx.stroke();
 
         // 绘制镜面正面（平的亮色边缘）- 黑白图案
-        ctx.strokeStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.strokeStyle = color === 'white' ? '#000000' : '#ffffff';
         ctx.lineWidth = 3;
         ctx.beginPath();
         ctx.moveTo(-mirrorLength/2, -mirrorLength/2);
@@ -336,7 +342,7 @@ class LaserChessUI {
         ctx.stroke();
 
         // 添加镜面高光效果 - 黑白图案
-        ctx.strokeStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.strokeStyle = color === 'white' ? '#000000' : '#ffffff';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(-mirrorLength/2 + 4, -mirrorLength/2 + 4);
@@ -349,9 +355,9 @@ class LaserChessUI {
     drawShield(x, y, radius, color, direction) {
         const ctx = this.canvasContext;
 
-        // 绘制底座（翻转颜色方案）
-        ctx.fillStyle = color === 'white' ? '#1e293b' : '#f8fafc';
-        ctx.strokeStyle = color === 'white' ? '#f8fafc' : '#1e293b';
+        // 绘制底座（白方用浅色，黑方用深色）
+        ctx.fillStyle = color === 'white' ? '#f8fafc' : '#1e293b';
+        ctx.strokeStyle = color === 'white' ? '#1e293b' : '#f8fafc';
         ctx.lineWidth = 3;
 
         ctx.beginPath();
@@ -359,39 +365,39 @@ class LaserChessUI {
         ctx.fill();
         ctx.stroke();
 
-        // 绘制盾牌（横向尖端设计，黑白图案）
-        ctx.fillStyle = color === 'white' ? '#000000' : '#ffffff';
-        ctx.strokeStyle = color === 'white' ? '#ffffff' : '#000000';
+        // 绘制盾牌（纵向尖端设计，黑白图案）
+        ctx.fillStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.strokeStyle = color === 'white' ? '#000000' : '#ffffff';
         ctx.lineWidth = 3;
 
-        const shieldWidth = radius * 0.55; // 宽度变小，高度变大
-        const shieldHeight = radius * 1.0;
+        const shieldWidth = radius * 1.0; // 宽度
+        const shieldHeight = radius * 0.55; // 高度
 
         ctx.save();
         ctx.translate(x, y);
-        this.rotateForDirection(ctx, direction);
+        this.rotateForDirection(ctx, direction, 'shield');
 
-        // 绘制盾牌主体（横向尖端，垂直对称）
+        // 绘制盾牌主体（纵向尖端，水平对称）
         ctx.beginPath();
-        // 上左弧形
-        ctx.moveTo(-shieldWidth, 0);
-        ctx.quadraticCurveTo(-shieldWidth * 0.8, -shieldHeight * 0.7, 0, -shieldHeight);
-        // 上右弧形
-        ctx.quadraticCurveTo(shieldWidth * 0.8, -shieldHeight * 0.7, shieldWidth, 0);
-        // 下右弧形
-        ctx.quadraticCurveTo(shieldWidth * 0.8, shieldHeight * 0.7, 0, shieldHeight);
-        // 下左弧形
-        ctx.quadraticCurveTo(-shieldWidth * 0.8, shieldHeight * 0.7, -shieldWidth, 0);
+        // 左上弧形
+        ctx.moveTo(0, -shieldHeight);
+        ctx.quadraticCurveTo(-shieldWidth * 0.7, -shieldHeight * 0.8, -shieldWidth, 0);
+        // 左下弧形
+        ctx.quadraticCurveTo(-shieldWidth * 0.7, shieldHeight * 0.8, 0, shieldHeight);
+        // 右下弧形
+        ctx.quadraticCurveTo(shieldWidth * 0.7, shieldHeight * 0.8, shieldWidth, 0);
+        // 右上弧形
+        ctx.quadraticCurveTo(shieldWidth * 0.7, -shieldHeight * 0.8, 0, -shieldHeight);
         ctx.closePath();
         ctx.fill();
         ctx.stroke();
 
-        // 添加盾牌中央弧形装饰线（水平对称）- 黑白图案
-        ctx.strokeStyle = color === 'white' ? '#ffffff' : '#000000';
+        // 添加盾牌中央弧形装饰线（垂直对称）- 黑白图案
+        ctx.strokeStyle = color === 'white' ? '#000000' : '#ffffff';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(-shieldWidth * 0.3, -shieldHeight * 0.3);
-        ctx.quadraticCurveTo(-shieldWidth * 0.5, 0, -shieldWidth * 0.3, shieldHeight * 0.3);
+        ctx.quadraticCurveTo(0, -shieldHeight * 0.5, shieldWidth * 0.3, -shieldHeight * 0.3);
         ctx.stroke();
 
         ctx.beginPath();
@@ -400,8 +406,8 @@ class LaserChessUI {
         ctx.stroke();
 
         // 添加盾牌中央强化圆点 - 黑白图案
-        ctx.fillStyle = color === 'white' ? '#000000' : '#ffffff';
-        ctx.strokeStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.fillStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.strokeStyle = color === 'white' ? '#000000' : '#ffffff';
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.arc(0, 0, radius * 0.15, 0, Math.PI * 2);
@@ -414,9 +420,9 @@ class LaserChessUI {
     drawSplitter(x, y, radius, color, direction) {
         const ctx = this.canvasContext;
 
-        // 绘制底座（翻转颜色方案）
-        ctx.fillStyle = color === 'white' ? '#1e293b' : '#f8fafc';
-        ctx.strokeStyle = color === 'white' ? '#f8fafc' : '#1e293b';
+        // 绘制底座（白方用浅色，黑方用深色）
+        ctx.fillStyle = color === 'white' ? '#f8fafc' : '#1e293b';
+        ctx.strokeStyle = color === 'white' ? '#1e293b' : '#f8fafc';
         ctx.lineWidth = 3;
 
         ctx.beginPath();
@@ -427,15 +433,15 @@ class LaserChessUI {
         // 绘制分光器（改进的三向箭头设计）
         ctx.save();
         ctx.translate(x, y);
-        this.rotateForDirection(ctx, direction);
+        this.rotateForDirection(ctx, direction, 'splitter');
 
         const splitterSize = radius * 0.8;
         const arrowLength = splitterSize * 0.7;
         const arrowWidth = 8;
 
         // 绘制中心圆形（分光器核心）- 黑白图案
-        ctx.fillStyle = color === 'white' ? '#000000' : '#ffffff';
-        ctx.strokeStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.fillStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.strokeStyle = color === 'white' ? '#000000' : '#ffffff';
         ctx.lineWidth = 3;
         ctx.beginPath();
         ctx.arc(0, 0, splitterSize * 0.3, 0, Math.PI * 2);
@@ -443,8 +449,8 @@ class LaserChessUI {
         ctx.stroke();
 
         // 绘制三个主要方向的箭头（上、左、右）- 黑白图案
-        ctx.fillStyle = color === 'white' ? '#000000' : '#ffffff';
-        ctx.strokeStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.fillStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.strokeStyle = color === 'white' ? '#000000' : '#ffffff';
         ctx.lineWidth = 2;
 
         // 向上箭头
@@ -456,35 +462,53 @@ class LaserChessUI {
         // 向右箭头
         this.drawArrow(ctx, splitterSize * 0.3, 0, arrowLength, 0, arrowWidth);
 
-        // 添加分光效果光晕 - 黑白图案
-        ctx.strokeStyle = color === 'white' ? '#ffffff' : '#000000';
-        ctx.lineWidth = 1;
-        ctx.setLineDash([3, 2]);
+        // 绘制粗实线指示方向 - 更明显
+        ctx.strokeStyle = color === 'white' ? '#000000' : '#ffffff';
+        ctx.lineWidth = 4;  // 粗实线
 
-        // 三条分光线（更明显）
+        // 三条分光线（实线，更明显）
         ctx.beginPath();
         ctx.moveTo(0, -splitterSize * 0.3);
-        ctx.lineTo(0, -splitterSize * 1.1);
-        ctx.moveTo(-splitterSize * 0.3, 0);
-        ctx.lineTo(-splitterSize * 1.1, 0);
-        ctx.moveTo(splitterSize * 0.3, 0);
-        ctx.lineTo(splitterSize * 1.1, 0);
+        ctx.lineTo(0, -splitterSize * 1.2);
         ctx.stroke();
 
-        ctx.setLineDash([]);
+        ctx.beginPath();
+        ctx.moveTo(-splitterSize * 0.3, 0);
+        ctx.lineTo(-splitterSize * 1.2, 0);
+        ctx.stroke();
 
-        // 添加能量光点 - 黑白图案
+        ctx.beginPath();
+        ctx.moveTo(splitterSize * 0.3, 0);
+        ctx.lineTo(splitterSize * 1.2, 0);
+        ctx.stroke();
+
+        // 在每条线的末端画大三角形箭头指示方向
         ctx.fillStyle = color === 'white' ? '#ffffff' : '#000000';
-        const glowPositions = [
-            {x: 0, y: -arrowLength},
-            {x: -arrowLength, y: 0},
-            {x: arrowLength, y: 0}
-        ];
-        glowPositions.forEach(pos => {
-            ctx.beginPath();
-            ctx.arc(pos.x, pos.y, 3, 0, Math.PI * 2);
-            ctx.fill();
-        });
+        const triangleSize = 8;
+
+        // 向上的三角形
+        ctx.beginPath();
+        ctx.moveTo(0, -splitterSize * 1.25);
+        ctx.lineTo(-triangleSize, -splitterSize * 1.25 + triangleSize);
+        ctx.lineTo(triangleSize, -splitterSize * 1.25 + triangleSize);
+        ctx.closePath();
+        ctx.fill();
+
+        // 向左的三角形
+        ctx.beginPath();
+        ctx.moveTo(-splitterSize * 1.25, 0);
+        ctx.lineTo(-splitterSize * 1.25 + triangleSize, -triangleSize);
+        ctx.lineTo(-splitterSize * 1.25 + triangleSize, triangleSize);
+        ctx.closePath();
+        ctx.fill();
+
+        // 向右的三角形
+        ctx.beginPath();
+        ctx.moveTo(splitterSize * 1.25, 0);
+        ctx.lineTo(splitterSize * 1.25 - triangleSize, -triangleSize);
+        ctx.lineTo(splitterSize * 1.25 - triangleSize, triangleSize);
+        ctx.closePath();
+        ctx.fill();
 
         ctx.restore();
     }
@@ -518,9 +542,9 @@ class LaserChessUI {
     drawJumper(x, y, radius, color, direction) {
         const ctx = this.canvasContext;
 
-        // 绘制底座（翻转颜色方案）
-        ctx.fillStyle = color === 'white' ? '#1e293b' : '#f8fafc';
-        ctx.strokeStyle = color === 'white' ? '#f8fafc' : '#1e293b';
+        // 绘制底座（白方用浅色，黑方用深色）
+        ctx.fillStyle = color === 'white' ? '#f8fafc' : '#1e293b';
+        ctx.strokeStyle = color === 'white' ? '#1e293b' : '#f8fafc';
         ctx.lineWidth = 3;
 
         ctx.beginPath();
@@ -531,14 +555,14 @@ class LaserChessUI {
         // 绘制跳台（椭圆主体 + 上下方向箭头设计）
         ctx.save();
         ctx.translate(x, y);
-        this.rotateForDirection(ctx, direction);
+        this.rotateForDirection(ctx, direction, 'jumper');
 
         const jumperWidth = radius * 0.85;
         const jumperHeight = radius * 0.45;
 
         // 绘制椭圆主体（黑白图案）
-        ctx.fillStyle = color === 'white' ? '#000000' : '#ffffff';
-        ctx.strokeStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.fillStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.strokeStyle = color === 'white' ? '#000000' : '#ffffff';
         ctx.lineWidth = 3;
 
         ctx.beginPath();
@@ -547,21 +571,21 @@ class LaserChessUI {
         ctx.stroke();
 
         // 添加内部椭圆环（增加层次感）- 黑白图案
-        ctx.strokeStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.strokeStyle = color === 'white' ? '#000000' : '#ffffff';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.ellipse(0, 0, jumperWidth * 0.7, jumperHeight * 0.7, 0, 0, Math.PI * 2);
         ctx.stroke();
 
         // 添加中心核心 - 黑白图案
-        ctx.fillStyle = color === 'white' ? '#000000' : '#ffffff';
+        ctx.fillStyle = color === 'white' ? '#ffffff' : '#000000';
         ctx.beginPath();
         ctx.ellipse(0, 0, jumperWidth * 0.3, jumperHeight * 0.3, 0, 0, Math.PI * 2);
         ctx.fill();
 
         // 绘制上下方向双向箭头 - 黑白图案
-        ctx.fillStyle = color === 'white' ? '#000000' : '#ffffff';
-        ctx.strokeStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.fillStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.strokeStyle = color === 'white' ? '#000000' : '#ffffff';
         ctx.lineWidth = 2;
 
         // 上方向外箭头
@@ -575,7 +599,7 @@ class LaserChessUI {
         this.drawArrow(ctx, 0, jumperHeight * 1.3, 0, jumperHeight * 0.7, 6);
 
         // 添加跳跃轨迹线 - 黑白图案
-        ctx.strokeStyle = color === 'white' ? '#ffffff' : '#000000';
+        ctx.strokeStyle = color === 'white' ? '#000000' : '#ffffff';
         ctx.lineWidth = 2;
         ctx.setLineDash([5, 3]);
 
@@ -612,6 +636,7 @@ class LaserChessUI {
         // 默认棋子样式
         const ctx = this.canvasContext;
 
+        // 白方用浅色，黑方用深色
         ctx.fillStyle = color === 'white' ? '#f8fafc' : '#1e293b';
         ctx.strokeStyle = color === 'white' ? '#1e293b' : '#f8fafc';
         ctx.lineWidth = 3;
@@ -628,22 +653,33 @@ class LaserChessUI {
         ctx.fillText('?', x, y);
     }
 
-    rotateForDirection(ctx, direction) {
-        // 根据方向旋转画布（修正激光炮塔朝向）
-        const rotations = {
-            'up': 180,  // 修正：向上发射应该朝下（从炮塔视角）
-            'down': 0,    // 修正：向下发射应该朝上
-            'left': 90,   // 修正：向左发射应该朝右
-            'right': 270, // 修正：向右发射应该朝左
-            'up-right': 135,  // 修正：右上发射应朝左下
-            'up-left': 225,  // 修正：左上发射应朝右下
-            'down-right': 45,   // 修正：右下发射应朝左上
-            'down-left': 315,  // 修正：左下发射应朝右上
-            'vertical': 180,  // 垂直默认向下
-            'horizontal': 90   // 水平默认向右
-        };
+    rotateForDirection(ctx, direction, pieceType) {
+        // 根据方向和棋子类型旋转画布
+        // 不同棋子有不同的基础形状,需要不同的旋转规则
 
-        ctx.rotate((rotations[direction] || 0) * Math.PI / 180);
+        let rotation = 0;
+
+        if (pieceType === 'mirror') {
+            // 镜子: 基础镜面从左上到右下，所有方向+90°
+            const mirrorRotations = {
+                'left': 90,    // 镜面朝左上 -> 向右旋转90°
+                'up': 180,     // 镜面朝右上 -> 向右旋转90°
+                'right': -90,  // 镜面朝右下 -> 向右旋转90° (270° = -90°)
+                'down': 0,     // 镜面朝左下 -> 向右旋转90°
+            };
+            rotation = mirrorRotations[direction] || 0;
+        } else {
+            // 其他棋子: 标准旋转(基础形状朝上)
+            const standardRotations = {
+                'up': 0,       // 朝上,不旋转
+                'right': 90,   // 朝右,顺时针90°
+                'down': 180,   // 朝下,旋转180°
+                'left': -90,   // 朝左,逆时针90°
+            };
+            rotation = standardRotations[direction] || 0;
+        }
+
+        ctx.rotate(rotation * Math.PI / 180);
     }
 
     

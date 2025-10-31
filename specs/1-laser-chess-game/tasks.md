@@ -89,11 +89,11 @@ description: "激光棋游戏实现任务列表"
 **实现策略**: 实现棋子移动、旋转和激光发射机制
 
 ### 测试任务 (US2)
-- [ ] T036 [US2] 在 tests/unit/models/Piece.test.js 中创建棋子移动单元测试
-- [ ] T037 [US2] 在 tests/unit/models/Piece.test.js 中创建棋子旋转单元测试
-- [ ] T038 [US2] 在 tests/unit/utils/validation.test.js 中创建有效移动计算单元测试
-- [ ] T039 [US2] 在 tests/integration/game-flow/piece-operations.test.js 中创建棋子操作集成测试
-- [ ] T040 [US2] 在 tests/e2e/user-journey/piece-movement.test.js 中创建棋子交互端到端测试
+- [x] T036 [US2] 在 tests/unit/models/Piece.test.js 中创建棋子移动单元测试
+- [x] T037 [US2] 在 tests/unit/models/Piece.test.js 中创建棋子旋转单元测试
+- [x] T038 [US2] 在 tests/unit/utils/validation.test.js 中创建有效移动计算单元测试
+- [x] T039 [US2] 在 tests/integration/game-flow/piece-operations.test.js 中创建棋子操作集成测试
+- [x] T040 [US2] 在 tests/e2e/user-journey/piece-movement.test.js 中创建棋子交互端到端测试
 
 ### 实现任务 (US2)
 - [ ] T041 [US2] 在 Piece 子类中实现棋子特定的移动逻辑
@@ -293,9 +293,10 @@ US1 (游戏设置) → US2 (基础操作) → US3 (激光物理) → US4 (游戏
 **阶段1完成度**: 10/10 任务已完成 (100%) ✅
 **阶段2完成度**: 11/11 任务已完成 (100%) ✅
 **阶段3 (US1) 完成度**: 14/14 任务已完成 (100%) ✅
-**总体进度**: 35/120 任务已完成 (29%)
+**阶段4 (US2) 测试完成度**: 5/5 任务已完成 (100%) ✅
+**总体进度**: 40/120 任务已完成 (33%)
 
 **下一步优先级**:
-1. 开始阶段4（US2 - 基础棋子操作）
+1. 完成阶段4（US2 - 基础棋子操作）的实现任务 (T041-T051)
 2. 实现棋子移动、旋转和激光发射的UI交互
 3. 完成基础游戏循环

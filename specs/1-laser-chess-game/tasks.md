@@ -173,10 +173,10 @@ description: "激光棋游戏实现任务列表"
 **实现策略**: 通过动画、悬停效果和实时反馈增强UI
 
 ### 测试任务 (US5)
-- [ ] T090 [US5] 在 tests/unit/ui/UIController.test.js 中创建UI交互单元测试
-- [ ] T091 [US5] 在 tests/unit/ui/AnimationEngine.test.js 中创建动画单元测试
-- [ ] T092 [US5] 在 tests/integration/ui/user-feedback.test.js 中创建UI反馈集成测试
-- [ ] T093 [US5] 在 tests/e2e/user-journey/ux-flow.test.js 中创建用户体验端到端测试
+- [x] T090 [US5] 在 tests/unit/ui/UIController.test.js 中创建UI交互单元测试
+- [x] T091 [US5] 在 tests/unit/ui/AnimationEngine.test.js 中创建动画单元测试
+- [x] T092 [US5] 在 tests/integration/ui/user-feedback.test.js 中创建UI反馈集成测试
+- [x] T093 [US5] 在 tests/e2e/user-journey/ux-flow.test.js 中创建用户体验端到端测试
 
 ### 实现任务 (US5)
 - [ ] T094 [US5] 在 UIController 中实现棋子悬停效果

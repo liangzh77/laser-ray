@@ -8,6 +8,17 @@ export class AnimationEngine {
     this.animations = [];
     this.isRunning = false;
     this.lastTimestamp = 0;
+    this.animationFrameId = null;
+
+    // 缓动函数 (T095-T097)
+    this.easings = {
+      linear: (t) => t,
+      easeInOut: (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t,
+      easeOut: (t) => t * (2 - t),
+      easeIn: (t) => t * t,
+      easeOutCubic: (t) => (--t) * t * t + 1,
+      easeInOutCubic: (t) => t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1
+    };
   }
 
   /**
@@ -48,15 +59,22 @@ export class AnimationEngine {
     // 更新所有动画
     this.animations = this.animations.filter(anim => {
       const elapsed = Date.now() - anim.startTime;
-      anim.progress = Math.min(elapsed / anim.duration, 1);
+      let progress = Math.min(elapsed / anim.duration, 1);
+
+      // 应用缓动函数 (T095)
+      if (anim.easing && this.easings[anim.easing]) {
+        progress = this.easings[anim.easing](progress);
+      }
+
+      anim.progress = progress;
 
       // 调用更新回调
       if (anim.onUpdate) {
-        anim.onUpdate(anim.progress);
+        anim.onUpdate(progress);
       }
 
       // 动画完成
-      if (anim.progress >= 1) {
+      if (elapsed >= anim.duration) {
         if (anim.onComplete) {
           anim.onComplete();
         }
@@ -68,9 +86,10 @@ export class AnimationEngine {
 
     // 如果还有动画，继续循环
     if (this.animations.length > 0) {
-      requestAnimationFrame(this.tick.bind(this));
+      this.animationFrameId = requestAnimationFrame(this.tick.bind(this));
     } else {
       this.isRunning = false;
+      this.animationFrameId = null;
     }
   }
 
@@ -79,7 +98,18 @@ export class AnimationEngine {
    */
   stop() {
     this.isRunning = false;
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
     this.animations = [];
+  }
+
+  /**
+   * 取消所有动画（别名）
+   */
+  cancelAll() {
+    this.stop();
   }
 
   /**
@@ -90,25 +120,33 @@ export class AnimationEngine {
   }
 
   /**
-   * 创建棋子移动动画
-   * @param {Object} piece - 棋子对象
-   * @param {Object} from - 起始位置 { col, row }
-   * @param {Object} to - 目标位置 { col, row }
+   * 创建棋子移动动画 (T095)
+   * @param {Object|Object} from - 棋子对象或起始位置 { x, y } / { col, row }
+   * @param {Object} to - 目标位置 { x, y } / { col, row }
+   * @param {number} duration - 动画时长（毫秒）
    * @param {Function} onUpdate - 更新回调
    * @param {Function} onComplete - 完成回调
-   * @param {number} duration - 动画时长（毫秒）
+   * @param {string} easing - 缓动函数名称
    */
-  animateMove(piece, from, to, onUpdate, onComplete, duration = 300) {
-    const { boardToPixel } = require('../utils/geometry.js');
-    const startPos = boardToPixel(from.col, from.row);
-    const endPos = boardToPixel(to.col, to.row);
+  animateMove(from, to, duration = 300, onUpdate, onComplete, easing = 'easeOut') {
+    let startPos = from;
+    let endPos = to;
 
-    this.addAnimation({
+    // 如果是棋盘坐标，转换为像素坐标
+    if (from.col !== undefined && from.row !== undefined) {
+      const { boardToPixel } = require('../utils/geometry.js');
+      startPos = boardToPixel(from.col, from.row);
+      endPos = boardToPixel(to.col, to.row);
+    }
+
+    const animation = {
       type: 'move',
-      piece,
+      from: startPos,
+      to: endPos,
       duration,
+      easing,
       onUpdate: (progress) => {
-        // 计算当前位置（线性插值）
+        // 计算当前位置（使用缓动插值）
         const currentX = startPos.x + (endPos.x - startPos.x) * progress;
         const currentY = startPos.y + (endPos.y - startPos.y) * progress;
 
@@ -117,19 +155,22 @@ export class AnimationEngine {
         }
       },
       onComplete
-    });
+    };
+
+    this.addAnimation(animation);
+    return animation;
   }
 
   /**
-   * 创建棋子旋转动画
-   * @param {Object} piece - 棋子对象
-   * @param {string} fromDirection - 起始方向
-   * @param {string} toDirection - 目标方向
+   * 创建棋子旋转动画 (T095)
+   * @param {number|string} fromAngle - 起始角度或方向
+   * @param {number|string} toAngle - 目标角度或方向
+   * @param {number} duration - 动画时长（毫秒）
    * @param {Function} onUpdate - 更新回调
    * @param {Function} onComplete - 完成回调
-   * @param {number} duration - 动画时长（毫秒）
+   * @param {string} easing - 缓动函数名称
    */
-  animateRotation(piece, fromDirection, toDirection, onUpdate, onComplete, duration = 200) {
+  animateRotate(fromAngle, toAngle, duration = 200, onUpdate, onComplete, easing = 'easeOut') {
     // 方向到角度的映射
     const directionAngles = {
       up: 0,
@@ -138,8 +179,8 @@ export class AnimationEngine {
       left: 270
     };
 
-    let startAngle = directionAngles[fromDirection] || 0;
-    let endAngle = directionAngles[toDirection] || 0;
+    let startAngle = typeof fromAngle === 'string' ? (directionAngles[fromAngle] || 0) : fromAngle;
+    let endAngle = typeof toAngle === 'string' ? (directionAngles[toAngle] || 0) : toAngle;
 
     // 选择最短旋转路径
     let angleDiff = endAngle - startAngle;
@@ -151,12 +192,14 @@ export class AnimationEngine {
 
     endAngle = startAngle + angleDiff;
 
-    this.addAnimation({
-      type: 'rotation',
-      piece,
+    const animation = {
+      type: 'rotate',
+      fromAngle: startAngle,
+      toAngle: endAngle,
       duration,
+      easing,
       onUpdate: (progress) => {
-        // 计算当前角度（线性插值）
+        // 计算当前角度（使用缓动插值）
         const currentAngle = startAngle + (endAngle - startAngle) * progress;
 
         if (onUpdate) {
@@ -164,56 +207,80 @@ export class AnimationEngine {
         }
       },
       onComplete
-    });
+    };
+
+    this.addAnimation(animation);
+    return animation;
   }
 
   /**
-   * 创建激光动画
-   * @param {Array} laserPath - 激光路径点数组
+   * 旋转动画的别名（兼容旧API）
+   */
+  animateRotation(piece, fromDirection, toDirection, onUpdate, onComplete, duration = 200) {
+    return this.animateRotate(fromDirection, toDirection, duration, onUpdate, onComplete);
+  }
+
+  /**
+   * 创建激光动画 (T096)
+   * @param {Array} path - 激光路径点数组 或 LaserBeam对象
+   * @param {number} duration - 动画时长（毫秒）
    * @param {Function} onUpdate - 更新回调
    * @param {Function} onComplete - 完成回调
-   * @param {number} duration - 动画时长（毫秒）
+   * @param {string} easing - 缓动函数名称
    */
-  animateLaser(laserPath, onUpdate, onComplete, duration = 500) {
-    this.addAnimation({
-      type: 'laser',
-      laserPath,
-      duration,
-      onUpdate: (progress) => {
-        // 计算当前显示到激光路径的哪个部分
-        const currentIndex = Math.floor(progress * laserPath.length);
-        const currentPath = laserPath.slice(0, currentIndex + 1);
+  animateLaser(path, duration = 500, onUpdate, onComplete, easing = 'linear') {
+    const laserPath = Array.isArray(path) ? path : (path.getPath ? path.getPath() : []);
 
+    const animation = {
+      type: 'laser',
+      path: laserPath,
+      duration,
+      easing,
+      onUpdate: (progress) => {
         if (onUpdate) {
-          onUpdate(currentPath, progress);
+          onUpdate(progress);
         }
       },
       onComplete
-    });
+    };
+
+    this.addAnimation(animation);
+    return animation;
   }
 
   /**
-   * 创建棋子摧毁动画
-   * @param {Object} piece - 棋子对象
+   * 创建棋子摧毁动画 (T097)
+   * @param {Object} position - 位置 { x, y } 或棋子对象
+   * @param {number} duration - 动画时长（毫秒）
    * @param {Function} onUpdate - 更新回调
    * @param {Function} onComplete - 完成回调
-   * @param {number} duration - 动画时长（毫秒）
+   * @param {string} easing - 缓动函数名称
    */
-  animateDestroy(piece, onUpdate, onComplete, duration = 400) {
-    this.addAnimation({
+  animateDestroy(position, duration = 400, onUpdate, onComplete, easing = 'easeOut') {
+    const animation = {
       type: 'destroy',
-      piece,
+      position,
       duration,
+      easing,
       onUpdate: (progress) => {
         // 计算淡出和缩放效果
         const opacity = 1 - progress;
         const scale = 1 - progress * 0.5; // 缩小到50%
+        const rotation = progress * 180; // 旋转180度
 
         if (onUpdate) {
-          onUpdate({ opacity, scale }, progress);
+          onUpdate({
+            opacity,
+            scale,
+            rotation,
+            progress
+          });
         }
       },
       onComplete
-    });
+    };
+
+    this.addAnimation(animation);
+    return animation;
   }
 }

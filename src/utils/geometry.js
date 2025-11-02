@@ -170,37 +170,37 @@ export function isInSameDiagonal(pos1, pos2) {
  */
 export function calculateReflection(incomingDirection, mirrorOrientation) {
   // 镜子反射规则：
-  // 镜面45°倾斜，从左上到右下
+  // 镜面45°倾斜，从左下到右上（渲染时向左旋转了90°）
   // 根据镜子朝向和入射方向决定反射方向
 
   const reflectionTable = {
-    // 镜子朝上：正面向上，右面向右
+    // 镜子朝上：镜面从左下到右上
     up: {
-      up: 'right',    // 从上入射 -> 向右反射
-      right: 'up',    // 从右入射 -> 向上反射
-      down: null,     // 从下入射 -> 摧毁（背面）
-      left: null      // 从左入射 -> 摧毁（侧面）
+      down: 'right',  // 从上往下入射 -> 向右反射
+      left: 'up',     // 从右往左入射 -> 向上反射
+      up: null,       // 从下往上入射 -> 摧毁（背面）
+      right: null     // 从左往右入射 -> 摧毁（侧面）
     },
-    // 镜子朝右：正面向右，下面向下
+    // 镜子朝右：镜面从左上到右下（旋转90°后）
     right: {
-      right: 'down',  // 从右入射 -> 向下反射
-      down: 'right',  // 从下入射 -> 向右反射
-      left: null,     // 从左入射 -> 摧毁（背面）
-      up: null        // 从上入射 -> 摧毁（侧面）
+      left: 'down',   // 从右往左入射 -> 向下反射
+      up: 'right',    // 从下往上入射 -> 向右反射
+      right: null,    // 从左往右入射 -> 摧毁（背面）
+      down: null      // 从上往下入射 -> 摧毁（侧面）
     },
-    // 镜子朝下：正面向下，左面向左
+    // 镜子朝下：镜面从右上到左下（旋转180°后）
     down: {
-      down: 'left',   // 从下入射 -> 向左反射
-      left: 'down',   // 从左入射 -> 向下反射
-      up: null,       // 从上入射 -> 摧毁（背面）
-      right: null     // 从右入射 -> 摧毁（侧面）
+      up: 'left',     // 从下往上入射 -> 向左反射
+      right: 'down',  // 从左往右入射 -> 向下反射
+      down: null,     // 从上往下入射 -> 摧毁（背面）
+      left: null      // 从右往左入射 -> 摧毁（侧面）
     },
-    // 镜子朝左：正面向左，上面向上
+    // 镜子朝左：镜面从右下到左上（旋转270°后）
     left: {
-      left: 'up',     // 从左入射 -> 向上反射
-      up: 'left',     // 从上入射 -> 向左反射
-      right: null,    // 从右入射 -> 摧毁（背面）
-      down: null      // 从下入射 -> 摧毁（侧面）
+      right: 'up',    // 从左往右入射 -> 向上反射
+      down: 'left',   // 从上往下入射 -> 向左反射
+      left: null,     // 从右往左入射 -> 摧毁（背面）
+      up: null        // 从下往上入射 -> 摧毁（侧面）
     }
   };
 
@@ -258,37 +258,34 @@ export function calculateJump(jumperPosition, incomingDirection, jumperOrientati
  */
 export function calculateSplit(incomingDirection, splitterOrientation) {
   // 分光器规则：
-  // - 从正面入射：分裂为左右两束
-  // - 从侧面入射：分裂为正面和另一侧面
-  // - 从背面入射：分光器摧毁
+  // 分光器有三个箭头方向：主方向(splitterOrientation)、左侧、右侧
+  // 从任意箭头的反方向入射，分光到另外两个箭头方向
+  // 从箭头相同方向入射(不可能) -> 摧毁
 
-  const oppositeDir = getOppositeDirection(splitterOrientation);
+  const mainDir = splitterOrientation;
+  const leftDir = rotateDirectionCounterClockwise(splitterOrientation);
+  const rightDir = rotateDirectionClockwise(splitterOrientation);
 
-  // 从背面入射 -> 摧毁
-  if (incomingDirection === oppositeDir) {
-    return null;
+  const oppositeMain = getOppositeDirection(mainDir);
+  const oppositeLeft = getOppositeDirection(leftDir);
+  const oppositeRight = getOppositeDirection(rightDir);
+
+  // 从主方向的反方向入射 -> 分裂为左右
+  if (incomingDirection === oppositeMain) {
+    return [leftDir, rightDir];
   }
 
-  // 从正面入射 -> 分裂为左右
-  if (incomingDirection === splitterOrientation) {
-    const left = rotateDirectionCounterClockwise(splitterOrientation);
-    const right = rotateDirectionClockwise(splitterOrientation);
-    return [left, right];
+  // 从左侧的反方向入射 -> 分裂为主方向和右侧
+  if (incomingDirection === oppositeLeft) {
+    return [mainDir, rightDir];
   }
 
-  // 从左侧入射 -> 分裂为正面和右侧
-  const leftSide = rotateDirectionCounterClockwise(splitterOrientation);
-  if (incomingDirection === leftSide) {
-    const right = rotateDirectionClockwise(splitterOrientation);
-    return [splitterOrientation, right];
+  // 从右侧的反方向入射 -> 分裂为主方向和左侧
+  if (incomingDirection === oppositeRight) {
+    return [mainDir, leftDir];
   }
 
-  // 从右侧入射 -> 分裂为正面和左侧
-  const rightSide = rotateDirectionClockwise(splitterOrientation);
-  if (incomingDirection === rightSide) {
-    return [splitterOrientation, leftSide];
-  }
-
+  // 其他情况(从箭头方向入射，不应该发生) -> 摧毁
   return null;
 }
 

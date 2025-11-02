@@ -137,24 +137,103 @@ export class BoardRenderer {
   }
 
   /**
-   * 绘制镜子
+   * 绘制镜子 - 45度斜向镜面(平的)，背面弧线
    */
   drawMirror(x, y, direction, color) {
     const { ctx } = this;
-    const size = 30;
+    const size = 30; // 镜面长度
+    const arcDepth = 20; // 弧线深度（增加到20让弧线非常明显）
 
     ctx.save();
     ctx.translate(x, y);
-    ctx.rotate(this.getRotationAngle(direction) * Math.PI / 180);
+    // 在原有方向基础上向左旋转90°
+    ctx.rotate((this.getRotationAngle(direction) - 90) * Math.PI / 180);
 
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 3;
+    // 1. 先绘制背面大弧线填充（月牙形深色区域）
+    // 镜子从左下到右上，弧线在左侧凸出
+    // 临时改成灰色以便看清镜面
+    ctx.fillStyle = 'rgba(180, 180, 180, 0.3)';  // 浅灰色半透明
     ctx.beginPath();
-    ctx.moveTo(-size / 2, -size / 2);
-    ctx.lineTo(size / 2, size / 2);
+    ctx.moveTo(-size / 2, size / 2);   // 左下
+    ctx.lineTo(size / 2, -size / 2);   // 右上
+    // 弧线向左侧凸出
+    ctx.bezierCurveTo(
+      size / 2 - arcDepth, -size / 2 - arcDepth,   // 控制点1：右上方偏左
+      -size / 2 - arcDepth, size / 2 + arcDepth,   // 控制点2：左下方偏左
+      -size / 2, size / 2                          // 终点：左下
+    );
+    ctx.closePath();
+    ctx.fill();
+
+    // 2. 绘制弧线外边框（灰色细线）
+    ctx.strokeStyle = 'rgba(150, 150, 150, 0.5)';
+    ctx.lineWidth = 1;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(size / 2, -size / 2);   // 右上
+    ctx.bezierCurveTo(
+      size / 2 - arcDepth, -size / 2 - arcDepth,
+      -size / 2 - arcDepth, size / 2 + arcDepth,
+      -size / 2, size / 2    // 左下
+    );
+    ctx.stroke();
+
+    // 3. 绘制镜面（平直，亮色反光效果）从左下到右上
+    // 临时改成红色粗线以便清楚看到方向
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 10;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(-size / 2, size / 2);   // 左下
+    ctx.lineTo(size / 2, -size / 2);   // 右上
+    ctx.stroke();
+
+    // 4. 镜面高光线
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(-size / 2 + 3, size / 2 - 3);   // 左下偏移
+    ctx.lineTo(size / 2 - 3, -size / 2 + 3);   // 右上偏移
     ctx.stroke();
 
     ctx.restore();
+  }
+
+  /**
+   * 调整颜色亮度
+   * @param {string} color - 颜色值 (支持 rgba 或 hex)
+   * @param {number} factor - 亮度调整因子 (-1 到 1)
+   * @returns {string} 调整后的颜色
+   */
+  adjustColorBrightness(color, factor) {
+    // 解析rgba颜色
+    const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+
+    if (match) {
+      let [, r, g, b, a = 1] = match;
+      r = parseInt(r);
+      g = parseInt(g);
+      b = parseInt(b);
+
+      // 调整亮度
+      if (factor > 0) {
+        // 变亮：向255靠近
+        r = Math.min(255, Math.round(r + (255 - r) * factor));
+        g = Math.min(255, Math.round(g + (255 - g) * factor));
+        b = Math.min(255, Math.round(b + (255 - b) * factor));
+      } else {
+        // 变暗：向0靠近
+        r = Math.max(0, Math.round(r * (1 + factor)));
+        g = Math.max(0, Math.round(g * (1 + factor)));
+        b = Math.max(0, Math.round(b * (1 + factor)));
+      }
+
+      return `rgba(${r}, ${g}, ${b}, ${a})`;
+    }
+
+    // 如果无法解析，返回原颜色
+    return color;
   }
 
   /**
@@ -328,7 +407,6 @@ export class BoardRenderer {
       ctx.beginPath();
 
       // 转换第一个点为像素坐标
-      const { boardToPixel } = require('../utils/geometry.js');
       const start = boardToPixel(path[0].col, path[0].row);
       ctx.moveTo(start.x, start.y);
 
@@ -357,7 +435,6 @@ export class BoardRenderer {
    */
   drawLaserGlow(path, color, width, intensity) {
     const { ctx } = this;
-    const { boardToPixel } = require('../utils/geometry.js');
 
     // 绘制多层发光效果
     const glowLayers = 3;
@@ -391,7 +468,6 @@ export class BoardRenderer {
    */
   drawLaserEnd(from, to, color, width) {
     const { ctx } = this;
-    const { boardToPixel } = require('../utils/geometry.js');
 
     const toPoint = boardToPixel(to.col, to.row);
 
@@ -429,7 +505,6 @@ export class BoardRenderer {
     } = options;
 
     const { ctx } = this;
-    const { boardToPixel } = require('../utils/geometry.js');
     const allLasers = laserBeam.getAllLasers();
 
     ctx.save();

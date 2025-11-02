@@ -107,18 +107,24 @@ export class Laser {
    * @returns {Laser}
    */
   clone(overrides = {}) {
+    // 使用当前位置作为新激光的起点(分光点)
+    const startPosition = overrides.position || this.position;
+
     const cloned = new Laser({
-      position: this.position,
+      position: startPosition,
       direction: this.direction,
       source: 'splitter',
       owner: this.owner
     });
 
-    // 应用覆盖属性
-    Object.assign(cloned, overrides);
+    // 应用其他覆盖属性
+    if (overrides.direction) {
+      cloned.direction = overrides.direction;
+    }
 
-    // 复制路径（但不包括交互历史）
-    cloned.path = [...this.path];
+    // 分光后的新激光从分光点开始,不包含之前的路径
+    // 这样可以避免路径重复绘制导致的视觉粗细不一致
+    // (原激光已经绘制了到分光点的路径)
 
     return cloned;
   }

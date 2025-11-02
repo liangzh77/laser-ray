@@ -4,7 +4,14 @@
  */
 
 import { GAME_CONFIG } from '../config/game-config.js';
-import { rotateDirectionClockwise, rotateDirectionCounterClockwise } from '../utils/geometry.js';
+import {
+  rotateDirectionClockwise,
+  rotateDirectionCounterClockwise,
+  calculateReflection,
+  calculateShieldInteraction,
+  calculateJump,
+  calculateSplit
+} from '../utils/geometry.js';
 
 export class Piece {
   /**
@@ -134,16 +141,16 @@ export class Mirror extends Piece {
   }
 
   handleLaserInteraction(laserDirection) {
-    const { calculateReflection } = require('../utils/geometry.js');
     const newDirection = calculateReflection(laserDirection, this.direction);
 
     if (newDirection === null) {
-      // 无效反射 -> 镜子摧毁
+      // 无效反射 -> 镜子摧毁,激光停止
       this.destroy();
       return {
         destroyed: true,
         blocked: false,
-        reflected: false
+        reflected: false,
+        laserStopped: true
       };
     }
 
@@ -166,7 +173,6 @@ export class Shield extends Piece {
   }
 
   handleLaserInteraction(laserDirection) {
-    const { calculateShieldInteraction } = require('../utils/geometry.js');
     const result = calculateShieldInteraction(laserDirection, this.direction);
 
     if (result.destroyed) {
@@ -227,7 +233,6 @@ export class Jumper extends Piece {
   }
 
   handleLaserInteraction(laserDirection) {
-    const { calculateJump } = require('../utils/geometry.js');
     const result = calculateJump(this.position, laserDirection, this.direction);
 
     if (result.destroyed) {
@@ -259,7 +264,6 @@ export class Splitter extends Piece {
   }
 
   handleLaserInteraction(laserDirection) {
-    const { calculateSplit } = require('../utils/geometry.js');
     const newDirections = calculateSplit(laserDirection, this.direction);
 
     if (newDirections === null) {

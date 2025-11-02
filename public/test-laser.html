@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>激光击中测试 - Laser Chess</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .test-container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .test-header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .test-info {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .test-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .test-btn {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .test-btn:hover {
+            background: #2980b9;
+        }
+        .test-btn.active {
+            background: #27ae60;
+        }
+        #game-board {
+            border: 2px solid #34495e;
+        }
+        .status-display {
+            background: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border-left: 4px solid #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🎯 激光击中效果测试</h1>
+            <p>系统测试每种棋子在4个方向被激光击中的效果</p>
+        </div>
+
+        <div class="test-info">
+            <h3>当前测试:</h3>
+            <p id="test-description">点击下方按钮开始测试</p>
+            <p><strong>棋子类型:</strong> <span id="piece-type">-</span></p>
+            <p><strong>击中方向:</strong> <span id="hit-direction">-</span></p>
+            <p><strong>预期结果:</strong> <span id="expected-result">-</span></p>
+        </div>
+
+        <div class="test-controls">
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+                <strong style="min-width: 80px;">镜子:</strong>
+                <button class="test-btn" onclick="testPiece('mirror', 'up')">朝上 ↑</button>
+                <button class="test-btn" onclick="testPiece('mirror', 'right')">朝右 →</button>
+                <button class="test-btn" onclick="testPiece('mirror', 'down')">朝下 ↓</button>
+                <button class="test-btn" onclick="testPiece('mirror', 'left')">朝左 ←</button>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+                <strong style="min-width: 80px;">盾牌:</strong>
+                <button class="test-btn" onclick="testPiece('shield', 'up')">朝上 ↑</button>
+                <button class="test-btn" onclick="testPiece('shield', 'right')">朝右 →</button>
+                <button class="test-btn" onclick="testPiece('shield', 'down')">朝下 ↓</button>
+                <button class="test-btn" onclick="testPiece('shield', 'left')">朝左 ←</button>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+                <strong style="min-width: 80px;">炮塔:</strong>
+                <button class="test-btn" onclick="testPiece('turret', 'up')">朝上 ↑</button>
+                <button class="test-btn" onclick="testPiece('turret', 'right')">朝右 →</button>
+                <button class="test-btn" onclick="testPiece('turret', 'down')">朝下 ↓</button>
+                <button class="test-btn" onclick="testPiece('turret', 'left')">朝左 ←</button>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+                <strong style="min-width: 80px;">分光器:</strong>
+                <button class="test-btn" onclick="testPiece('splitter', 'up')">朝上 ↑</button>
+                <button class="test-btn" onclick="testPiece('splitter', 'right')">朝右 →</button>
+                <button class="test-btn" onclick="testPiece('splitter', 'down')">朝下 ↓</button>
+                <button class="test-btn" onclick="testPiece('splitter', 'left')">朝左 ←</button>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="test-btn" onclick="fireLaser()" style="background: #e74c3c;">🔥 发射激光</button>
+                <button class="test-btn" onclick="reset()" style="background: #95a5a6;">重置</button>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 20px; align-items: flex-start;">
+            <div>
+                <canvas id="game-board" width="560" height="560"></canvas>
+            </div>
+            <div class="status-display" style="flex: 1;">
+                <h3>测试日志:</h3>
+                <div id="test-log" style="font-family: monospace; font-size: 12px; max-height: 500px; overflow-y: auto;">
+                    等待测试...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { GameEngine } from '/src/core/GameEngine.js';
+        import { BoardRenderer } from '/src/ui/BoardRenderer.js';
+        import { Board } from '/src/models/Board.js';
+        import { Mirror, Shield, Turret, Splitter } from '/src/models/Piece.js';
+        import { GAME_CONFIG } from '/src/config/game-config.js';
+
+        const canvas = document.getElementById('game-board');
+        const boardRenderer = new BoardRenderer(canvas);
+        let gameEngine = null;
+        let currentTestBoard = null;
+
+        window.testLog = function(message) {
+            const log = document.getElementById('test-log');
+            const time = new Date().toLocaleTimeString();
+            log.innerHTML += `[${time}] ${message}<br>`;
+            log.scrollTop = log.scrollHeight;
+        };
+
+        window.updateTestInfo = function(pieceType, direction, expectedResult) {
+            document.getElementById('piece-type').textContent = pieceType;
+            document.getElementById('hit-direction').textContent = direction;
+            document.getElementById('expected-result').textContent = expectedResult;
+        };
+
+        // 统一的测试函数：炮塔固定在顶部中央朝下，测试棋子在中央
+        window.testPiece = function(pieceType, direction) {
+            const pieceNames = {
+                'mirror': '镜子',
+                'shield': '盾牌',
+                'turret': '炮塔',
+                'splitter': '分光器'
+            };
+
+            const dirNames = {
+                'up': '朝上 ↑',
+                'right': '朝右 →',
+                'down': '朝下 ↓',
+                'left': '朝左 ←'
+            };
+
+            // 创建新的棋盘
+            currentTestBoard = new Board();
+            currentTestBoard.clear();
+
+            // 固定：白方炮塔在顶部中央 (d1)，朝下发射
+            const turret = new Turret({
+                owner: 'white',
+                position: {col: 3, row: 0},
+                direction: GAME_CONFIG.DIRECTIONS.DOWN
+            });
+            currentTestBoard.placePiece(turret, {col: 3, row: 0});
+
+            // 目标棋子在中央 (d4)
+            let target;
+            const targetPos = {col: 3, row: 3};
+            const targetDir = GAME_CONFIG.DIRECTIONS[direction.toUpperCase()];
+
+            switch(pieceType) {
+                case 'mirror':
+                    target = new Mirror({
+                        owner: 'black',
+                        position: targetPos,
+                        direction: targetDir
+                    });
+                    break;
+                case 'shield':
+                    target = new Shield({
+                        owner: 'black',
+                        position: targetPos,
+                        direction: targetDir
+                    });
+                    break;
+                case 'turret':
+                    target = new Turret({
+                        owner: 'black',
+                        position: targetPos,
+                        direction: targetDir
+                    });
+                    break;
+                case 'splitter':
+                    target = new Splitter({
+                        owner: 'black',
+                        position: targetPos,
+                        direction: targetDir
+                    });
+                    break;
+            }
+            currentTestBoard.placePiece(target, targetPos);
+
+            // 渲染棋盘
+            boardRenderer.render(currentTestBoard);
+
+            // 更新显示信息
+            document.getElementById('piece-type').textContent = pieceNames[pieceType];
+            document.getElementById('hit-direction').textContent = dirNames[direction];
+            document.getElementById('test-description').textContent =
+                `测试: ${pieceNames[pieceType]} ${dirNames[direction]}`;
+
+            // 预期结果判断
+            let expectedResult = '';
+            if (pieceType === 'mirror') {
+                expectedResult = '激光被反射';
+            } else if (pieceType === 'shield') {
+                expectedResult = direction === 'up' ? '盾牌阻挡激光' : '盾牌被摧毁';
+            } else if (pieceType === 'turret') {
+                expectedResult = '炮塔被摧毁，游戏结束';
+            } else if (pieceType === 'splitter') {
+                expectedResult = direction === 'down' ? '分光器被摧毁' : '激光分裂成三束';
+            }
+            document.getElementById('expected-result').textContent = expectedResult;
+
+            testLog(`设置完成: ${pieceNames[pieceType]} ${dirNames[direction]}`);
+            testLog(`炮塔: 顶部中央 (d1)，朝下 ↓`);
+            testLog(`目标: 中央 (d4)，${dirNames[direction]}`);
+            testLog(`预期结果: ${expectedResult}`);
+            testLog('---');
+        };
+
+        window.fireLaser = function() {
+            if (!currentTestBoard) {
+                testLog('❌ 错误: 请先选择一个测试场景');
+                return;
+            }
+
+            testLog('🔥 发射激光...');
+
+            // 创建临时游戏引擎
+            gameEngine = new GameEngine({ timeMode: 'unlimited' });
+            gameEngine.game.board = currentTestBoard;
+            gameEngine.startGame(); // 启动游戏，使状态变为 playing
+
+            const result = gameEngine.fireLaser();
+
+            if (result.success) {
+                testLog('✅ 激光发射成功');
+
+                // 显示激光动画
+                boardRenderer.render(currentTestBoard);
+                boardRenderer.drawLaser(result.laserBeam, {
+                    color: 'rgba(255, 50, 50, 0.9)',
+                    width: 4,
+                    glowIntensity: 0.8
+                });
+
+                setTimeout(() => {
+                    boardRenderer.render(currentTestBoard);
+                    testLog('激光动画结束');
+
+                    // 检查棋子状态
+                    const allPieces = currentTestBoard.getAllPieces();
+                    allPieces.forEach(piece => {
+                        if (piece.isDestroyed) {
+                            testLog(`💥 ${piece.type} 在 (${piece.position.col}, ${piece.position.row}) 被摧毁`);
+                        }
+                    });
+
+                    if (result.gameOver) {
+                        testLog('🎮 游戏结束: ' + result.gameOverResult.reason);
+                    }
+                }, 1500);
+            } else {
+                testLog('❌ 激光发射失败: ' + result.reason);
+            }
+        };
+
+        window.reset = function() {
+            currentTestBoard = null;
+            if (currentTestBoard) {
+                currentTestBoard.clear();
+            }
+            boardRenderer.clearCanvas();
+            boardRenderer.drawGrid();
+            document.getElementById('test-log').innerHTML = '重置完成，等待测试...<br>';
+            document.getElementById('test-description').textContent = '点击下方按钮开始测试';
+            document.getElementById('piece-type').textContent = '-';
+            document.getElementById('hit-direction').textContent = '-';
+            document.getElementById('expected-result').textContent = '-';
+        };
+
+
+        // 初始化显示
+        reset();
+        testLog('激光击中测试工具已就绪');
+        testLog('选择一个测试场景，然后点击"发射激光"按钮');
+    </script>
+</body>
+</html>

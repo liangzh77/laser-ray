@@ -531,7 +531,7 @@ export class BoardRenderer {
    * 绘制激光发光效果
    * @private
    */
-  drawLaserGlow(path, color, width, intensity) {
+  drawLaserGlow(segment, color, width, intensity) {
     const { ctx } = this;
 
     // 绘制多层发光效果
@@ -548,11 +548,21 @@ export class BoardRenderer {
 
       ctx.beginPath();
 
-      const start = boardToPixel(path[0].col, path[0].row);
+      // 处理边缘点
+      let startIndex = 0;
+      let start;
+
+      if (segment[0].isEdge && segment.length > 1) {
+        start = this.getEdgePixel(segment[0], segment[1]);
+        startIndex = 1;
+      } else {
+        start = boardToPixel(segment[0].col, segment[0].row);
+        startIndex = 1;
+      }
       ctx.moveTo(start.x, start.y);
 
-      for (let i = 1; i < path.length; i++) {
-        const point = boardToPixel(path[i].col, path[i].row);
+      for (let i = startIndex; i < segment.length; i++) {
+        const point = boardToPixel(segment[i].col, segment[i].row);
         ctx.lineTo(point.x, point.y);
       }
 

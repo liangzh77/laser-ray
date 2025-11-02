@@ -455,9 +455,15 @@ export class BoardRenderer {
    * @returns {Object} {x, y} 像素坐标
    */
   getEdgePixel(edgePoint, nextCell) {
-    // 边缘点就是当前格的中心
-    // 即跳台后第一格的中心位置
-    return boardToPixel(edgePoint.col, edgePoint.row);
+    // edgePoint 是被跳过的格子，nextCol/nextRow 是落地格子
+    // 返回这两个格子之间的边缘位置（中点）
+    const pixel1 = boardToPixel(edgePoint.col, edgePoint.row);
+    const pixel2 = boardToPixel(edgePoint.nextCol, edgePoint.nextRow);
+
+    return {
+      x: (pixel1.x + pixel2.x) / 2,
+      y: (pixel1.y + pixel2.y) / 2
+    };
   }
 
   /**
@@ -474,8 +480,15 @@ export class BoardRenderer {
 
     const segments = [];
     let currentSegment = [];
+    let skipNext = false; // 标记是否跳过下一个点
 
     for (let i = 0; i < path.length; i++) {
+      // 如果需要跳过当前点
+      if (skipNext) {
+        skipNext = false;
+        continue;
+      }
+
       // 如果当前索引是跳跃点
       if (jumpPoints.includes(i)) {
         // 先把跳台点加入当前段
@@ -489,17 +502,37 @@ export class BoardRenderer {
         // 开始新段,从跳台后第一格开始
         currentSegment = [];
 
-        if (i + 1 < path.length && i + 2 < path.length) {
-          // 添加跳台后第一格作为起点,并创建到第二格的边缘点
+        if (i + 1 < path.length) {
+          // 计算跳台后应该在哪个格子
+          // 跳台在 path[i]，激光物理上跳到 path[i+1]
+          // 我们需要找到跳台和 path[i+1] 之间被跳过的格子
+          const jumperPos = path[i];
+          const landingPos = path[i + 1];
+
+          // 计算被跳过的中间格子（跳台的下一格）
+          // 例如：跳台在 row=3，落地在 row=5，中间格子是 row=4
+          const direction = landingPos.row > jumperPos.row ? 'down' :
+                           landingPos.row < jumperPos.row ? 'up' :
+                           landingPos.col > jumperPos.col ? 'right' : 'left';
+
+          const skippedCol = direction === 'right' ? jumperPos.col + 1 :
+                            direction === 'left' ? jumperPos.col - 1 :
+                            jumperPos.col;
+          const skippedRow = direction === 'down' ? jumperPos.row + 1 :
+                            direction === 'up' ? jumperPos.row - 1 :
+                            jumperPos.row;
+
+          // 创建边缘点：使用被跳过的格子和落地格子
           const edgePoint = {
-            col: path[i + 1].col,
-            row: path[i + 1].row,
-            isEdge: true,  // 标记为边缘,绘制时调整到与下一格的边缘
-            nextCol: path[i + 2].col,
-            nextRow: path[i + 2].row
+            col: skippedCol,
+            row: skippedRow,
+            isEdge: true,
+            nextCol: landingPos.col,
+            nextRow: landingPos.row
           };
           currentSegment.push(edgePoint);
-          // 不跳过任何点,让后续点正常添加
+          // 不跳过 i+1，让它正常加入segment，这样才能继续画完整路径
+          // skipNext = true;
         }
       } else {
         // 正常添加点

@@ -242,7 +242,7 @@ export class GameEngine {
       turret.position,
       turret.direction,
       currentPlayer.id,
-      turret
+      currentPlayer
     );
 
     if (!fireValidation.valid) {

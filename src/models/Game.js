@@ -69,7 +69,7 @@ export class Game {
    * 开始游戏
    */
   start() {
-    this.state = GAME_CONFIG.GAME_STATES.PLAYING;
+    // 状态由StateManager统一管理，这里只记录开始时间
     this.startedAt = Date.now();
   }
 

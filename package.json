@@ -4,13 +4,13 @@
   "description": "一个双人对战的网页棋类游戏，使用激光、镜子、盾牌、炮塔、跳台、分光器等策略元素",
   "main": "public/index.html",
   "scripts": {
-    "dev": "http-server public -p 8080 -c-1",
+    "dev": "http-server . -p 8080 -c-1 -o /public/index.html",
     "build": "echo 'Build completed - Static files ready for deployment'",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:e2e": "playwright test",
     "lint": "echo 'Linting completed'",
-    "serve": "http-server public -p 8080"
+    "serve": "http-server . -p 8080"
   },
   "keywords": [
     "game",

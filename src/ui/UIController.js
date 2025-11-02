@@ -4,6 +4,7 @@
  */
 
 import { on, GAME_EVENTS } from '../core/EventBus.js';
+import { getValidCastleMoves } from '../utils/validation.js';
 
 export class UIController {
   constructor(gameEngine, boardRenderer) {
@@ -83,13 +84,13 @@ export class UIController {
     this.selectedPiece = piece;
 
     // 计算可移动位置
-    const { getValidCastleMoves } = require('../utils/validation.js');
     this.validMoves = getValidCastleMoves(
       piece.position,
       pos => this.gameEngine.game.board.hasPieceAt(pos)
     );
 
     this.render();
+    this.updateActionButtons();
   }
 
   /**
@@ -100,6 +101,7 @@ export class UIController {
     this.selectedPiece = null;
     this.validMoves = [];
     this.render();
+    this.updateActionButtons();
   }
 
   /**
@@ -189,20 +191,50 @@ export class UIController {
     const result = this.gameEngine.fireLaser();
 
     if (result.success) {
-      this.deselectPiece();
-      // 激光发射后自动结束回合
-      this.gameEngine.endTurn();
+      // 显示激光动画,动画结束后再执行后续操作
+      this.showLaserAnimation(result.laserBeam, () => {
+        this.deselectPiece();
+        // 激光发射后自动结束回合
+        this.gameEngine.endTurn();
+      });
     } else {
       console.log('发射激光失败:', result.reason);
     }
   }
 
   /**
+   * 显示激光动画
+   * @param {LaserBeam} laserBeam - 激光束
+   * @param {Function} onComplete - 动画完成后的回调函数
+   */
+  showLaserAnimation(laserBeam, onComplete) {
+    console.log('激光束数据:', laserBeam);
+
+    // 先渲染棋盘
+    this.render();
+
+    // 然后绘制激光
+    this.boardRenderer.drawLaser(laserBeam, {
+      color: 'rgba(255, 50, 50, 0.9)',
+      width: 4,
+      glowIntensity: 0.8
+    });
+
+    // 延迟一段时间后清除激光并执行回调
+    setTimeout(() => {
+      this.render();
+      if (onComplete) {
+        onComplete();
+      }
+    }, 1500);
+  }
+
+  /**
    * 更新操作按钮状态
    */
   updateActionButtons() {
-    const rotateBtn = document.getElementById('rotate');
-    const fireLaserBtn = document.getElementById('fireLaser');
+    const rotateBtn = document.getElementById('rotate-btn');
+    const fireLaserBtn = document.getElementById('fire-laser-btn');
 
     if (rotateBtn) {
       rotateBtn.disabled = !this.selectedPiece || !this.gameEngine.game.isPlaying();
@@ -520,6 +552,7 @@ export class UIController {
     this.render();
     this.startTimerUpdate();
     this.updateGameStatus();
+    this.updateActionButtons();
     this.updateStatus('游戏开始！白方先手');
   }
 
@@ -541,5 +574,6 @@ export class UIController {
     const player = data.player === 'white' ? '白方' : '黑方';
     this.updateStatus(`${player}的回合`);
     this.updateGameStatus();
+    this.updateActionButtons();
   }
 }

@@ -246,6 +246,11 @@ export class BoardRenderer {
     ctx.rotate(this.getRotationAngle(direction) * Math.PI / 180);
 
     ctx.fillStyle = color;
+
+    // 绘制上半格的盾牌（压扁到一半高度）
+    ctx.save();
+    ctx.translate(0, -10); // 向上移动，距离中心10像素
+    ctx.scale(1, 0.5); // 垂直方向压扁到一半
     ctx.beginPath();
     ctx.arc(0, 0, 20, Math.PI, 0);
     ctx.lineTo(10, 20);
@@ -253,6 +258,20 @@ export class BoardRenderer {
     ctx.lineTo(-10, 20);
     ctx.closePath();
     ctx.fill();
+    ctx.restore();
+
+    // 绘制下半格的盾牌（对称）
+    ctx.save();
+    ctx.translate(0, 10); // 向下移动，距离中心10像素
+    ctx.scale(1, -0.5); // 垂直翻转并压扁到一半
+    ctx.beginPath();
+    ctx.arc(0, 0, 20, Math.PI, 0);
+    ctx.lineTo(10, 20);
+    ctx.lineTo(0, 25);
+    ctx.lineTo(-10, 20);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
 
     ctx.restore();
   }
@@ -288,15 +307,29 @@ export class BoardRenderer {
     ctx.rotate(this.getRotationAngle(direction) * Math.PI / 180);
 
     ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 8;
 
-    // 绘制箭头
+    // 绘制上箭头
     ctx.beginPath();
     ctx.moveTo(0, -20);
+    ctx.lineTo(0, -8);
+    ctx.moveTo(-5, -13);
+    ctx.lineTo(0, -20);
+    ctx.lineTo(5, -13);
+    ctx.stroke();
+
+    // 绘制中间的横椭圆
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 15, 6, 0, 0, 2 * Math.PI);
+    ctx.stroke();
+
+    // 绘制下箭头
+    ctx.beginPath();
+    ctx.moveTo(0, 8);
     ctx.lineTo(0, 20);
-    ctx.moveTo(-5, 15);
+    ctx.moveTo(-5, 13);
     ctx.lineTo(0, 20);
-    ctx.lineTo(5, 15);
+    ctx.lineTo(5, 13);
     ctx.stroke();
 
     ctx.restore();
@@ -313,7 +346,7 @@ export class BoardRenderer {
     ctx.rotate(this.getRotationAngle(direction) * Math.PI / 180);
 
     ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 8;
 
     // 三个方向的箭头
     const drawArrow = (angle) => {

@@ -151,8 +151,8 @@ export class BoardRenderer {
 
     // 1. 先绘制背面大弧线填充（月牙形深色区域）
     // 镜子从左下到右上，弧线在左侧凸出
-    // 临时改成灰色以便看清镜面
-    ctx.fillStyle = 'rgba(180, 180, 180, 0.3)';  // 浅灰色半透明
+    const backColor = this.adjustColorBrightness(color, -0.3);  // 背面使用深色
+    ctx.fillStyle = backColor.replace(/[\d.]+\)$/, '0.3)');  // 半透明
     ctx.beginPath();
     ctx.moveTo(-size / 2, size / 2);   // 左下
     ctx.lineTo(size / 2, -size / 2);   // 右上
@@ -165,8 +165,8 @@ export class BoardRenderer {
     ctx.closePath();
     ctx.fill();
 
-    // 2. 绘制弧线外边框（灰色细线）
-    ctx.strokeStyle = 'rgba(150, 150, 150, 0.5)';
+    // 2. 绘制弧线外边框
+    ctx.strokeStyle = this.adjustColorBrightness(color, -0.2);
     ctx.lineWidth = 1;
     ctx.lineCap = 'round';
     ctx.beginPath();
@@ -178,10 +178,9 @@ export class BoardRenderer {
     );
     ctx.stroke();
 
-    // 3. 绘制镜面（平直，亮色反光效果）从左下到右上
-    // 临时改成红色粗线以便清楚看到方向
-    ctx.strokeStyle = 'red';
-    ctx.lineWidth = 10;
+    // 3. 绘制镜面（平直）从左下到右上
+    ctx.strokeStyle = color;  // 使用传入的颜色
+    ctx.lineWidth = 8;
     ctx.lineCap = 'round';
     ctx.beginPath();
     ctx.moveTo(-size / 2, size / 2);   // 左下
@@ -390,33 +389,42 @@ export class BoardRenderer {
     // 为每条激光绘制路径
     allLasers.forEach(laser => {
       const path = laser.getPath();
+      const jumpPoints = laser.jumpPoints || [];
 
       if (path.length < 2) return;
 
-      // 绘制发光效果
-      if (glowIntensity > 0) {
-        this.drawLaserGlow(path, color, width, glowIntensity);
-      }
+      // 将路径分段,在跳跃点处断开
+      const segments = this.splitPathAtJumps(path, jumpPoints);
 
-      // 绘制主激光线
-      ctx.strokeStyle = color;
-      ctx.lineWidth = width;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
+      // 绘制每一段
+      segments.forEach(segment => {
+        if (segment.length < 2) return;
 
-      ctx.beginPath();
+        // 绘制发光效果
+        if (glowIntensity > 0) {
+          this.drawLaserGlow(segment, color, width, glowIntensity);
+        }
 
-      // 转换第一个点为像素坐标
-      const start = boardToPixel(path[0].col, path[0].row);
-      ctx.moveTo(start.x, start.y);
+        // 绘制主激光线
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
 
-      // 绘制路径
-      for (let i = 1; i < path.length; i++) {
-        const point = boardToPixel(path[i].col, path[i].row);
-        ctx.lineTo(point.x, point.y);
-      }
+        ctx.beginPath();
 
-      ctx.stroke();
+        // 转换第一个点为像素坐标
+        const start = boardToPixel(segment[0].col, segment[0].row);
+        ctx.moveTo(start.x, start.y);
+
+        // 绘制路径
+        for (let i = 1; i < segment.length; i++) {
+          const point = boardToPixel(segment[i].col, segment[i].row);
+          ctx.lineTo(point.x, point.y);
+        }
+
+        ctx.stroke();
+      });
 
       // 在激光末端绘制箭头或终点标记
       if (path.length >= 2) {
@@ -427,6 +435,43 @@ export class BoardRenderer {
     });
 
     ctx.restore();
+  }
+
+  /**
+   * 将激光路径在跳跃点处分段
+   * @private
+   * @param {Array} path - 完整路径
+   * @param {Array} jumpPoints - 跳跃点索引数组
+   * @returns {Array<Array>} 分段后的路径数组
+   */
+  splitPathAtJumps(path, jumpPoints) {
+    if (jumpPoints.length === 0) {
+      return [path];
+    }
+
+    const segments = [];
+    let currentSegment = [];
+
+    for (let i = 0; i < path.length; i++) {
+      currentSegment.push(path[i]);
+
+      // 如果当前索引是跳跃点,结束当前段,开始新段
+      if (jumpPoints.includes(i)) {
+        if (currentSegment.length > 0) {
+          segments.push(currentSegment);
+        }
+        // 从下一个点开始新段(跳过跳跃点的下一个位置)
+        currentSegment = [];
+        i++; // 跳过下一个点(跳台后的那一格)
+      }
+    }
+
+    // 添加最后一段
+    if (currentSegment.length > 0) {
+      segments.push(currentSegment);
+    }
+
+    return segments;
   }
 
   /**

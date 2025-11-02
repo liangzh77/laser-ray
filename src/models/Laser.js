@@ -17,6 +17,7 @@ export class Laser {
     this.source = source;
     this.owner = owner;
     this.path = [{ ...position }]; // 激光经过的所有位置
+    this.jumpPoints = []; // 跳跃点索引数组,用于标记路径中的跳跃位置
     this.interactions = []; // 激光与棋子的交互记录
     this.isActive = true;
     this.id = this.generateId();
@@ -45,6 +46,15 @@ export class Laser {
    */
   changeDirection(newDirection) {
     this.direction = newDirection;
+  }
+
+  /**
+   * 标记当前位置为跳跃点
+   * 跳跃点表示激光在此处跳跃,渲染时会断开路径
+   */
+  markJump() {
+    // 记录当前路径长度作为跳跃点的索引
+    this.jumpPoints.push(this.path.length - 1);
   }
 
   /**

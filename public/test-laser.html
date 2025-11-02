@@ -105,6 +105,14 @@
                 <button class="test-btn" onclick="testPiece('splitter', 'left')">朝左 ←</button>
             </div>
 
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+                <strong style="min-width: 80px;">跳台:</strong>
+                <button class="test-btn" onclick="testPiece('jumper', 'up')">朝上 ↑</button>
+                <button class="test-btn" onclick="testPiece('jumper', 'right')">朝右 →</button>
+                <button class="test-btn" onclick="testPiece('jumper', 'down')">朝下 ↓</button>
+                <button class="test-btn" onclick="testPiece('jumper', 'left')">朝左 ←</button>
+            </div>
+
             <div style="display: flex; gap: 10px; margin-top: 15px;">
                 <button class="test-btn" onclick="fireLaser()" style="background: #e74c3c;">🔥 发射激光</button>
                 <button class="test-btn" onclick="reset()" style="background: #95a5a6;">重置</button>
@@ -128,7 +136,7 @@
         import { GameEngine } from '/src/core/GameEngine.js';
         import { BoardRenderer } from '/src/ui/BoardRenderer.js';
         import { Board } from '/src/models/Board.js';
-        import { Mirror, Shield, Turret, Splitter } from '/src/models/Piece.js';
+        import { Mirror, Shield, Turret, Splitter, Jumper } from '/src/models/Piece.js';
         import { GAME_CONFIG } from '/src/config/game-config.js';
 
         const canvas = document.getElementById('game-board');
@@ -155,7 +163,8 @@
                 'mirror': '镜子',
                 'shield': '盾牌',
                 'turret': '炮塔',
-                'splitter': '分光器'
+                'splitter': '分光器',
+                'jumper': '跳台'
             };
 
             const dirNames = {
@@ -211,6 +220,13 @@
                         direction: targetDir
                     });
                     break;
+                case 'jumper':
+                    target = new Jumper({
+                        owner: 'black',
+                        position: targetPos,
+                        direction: targetDir
+                    });
+                    break;
             }
             currentTestBoard.placePiece(target, targetPos);
 
@@ -232,7 +248,9 @@
             } else if (pieceType === 'turret') {
                 expectedResult = '炮塔被摧毁，游戏结束';
             } else if (pieceType === 'splitter') {
-                expectedResult = direction === 'down' ? '分光器被摧毁' : '激光分裂成三束';
+                expectedResult = direction === 'down' ? '分光器被摧毁' : '激光分裂成多束';
+            } else if (pieceType === 'jumper') {
+                expectedResult = direction === 'up' || direction === 'down' ? '激光跳过跳台' : '跳台被摧毁';
             }
             document.getElementById('expected-result').textContent = expectedResult;
 

@@ -137,6 +137,9 @@ export class PhysicsEngine {
 
     // 激光跳跃
     if (result.jumped) {
+      // 标记当前位置(跳台位置)为跳跃点
+      laser.markJump();
+      // 移动到跳跃后的位置
       laser.moveTo(result.newPosition);
       laser.changeDirection(result.newDirection);
       return;

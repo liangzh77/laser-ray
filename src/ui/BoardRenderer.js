@@ -489,24 +489,19 @@ export class BoardRenderer {
 
     const segments = [];
     let currentSegment = [];
-    let skipNext = false;
 
     for (let i = 0; i < path.length; i++) {
-      // 如果需要跳过当前点
-      if (skipNext) {
-        skipNext = false;
-        continue;
-      }
-
-      currentSegment.push(path[i]);
-
-      // 如果当前索引是跳跃点,结束当前段,开始新段
+      // 如果当前索引是跳跃点
       if (jumpPoints.includes(i)) {
+        // 先把跳台点加入当前段
+        currentSegment.push(path[i]);
+
+        // 结束第一段
         if (currentSegment.length > 0) {
           segments.push(currentSegment);
         }
 
-        // 新段从边缘点开始
+        // 开始新段,从边缘点开始
         currentSegment = [];
 
         if (i + 1 < path.length) {
@@ -517,9 +512,13 @@ export class BoardRenderer {
             isEdge: true
           };
           currentSegment.push(edgePoint);
-          // 标记跳过下一个点(跳台后第一格的实际位置)
-          skipNext = true;
         }
+
+        // 跳过 i+1 (跳台后第一格),从 i+2 开始继续
+        i++; // 下次循环会是 i+2
+      } else {
+        // 正常添加点
+        currentSegment.push(path[i]);
       }
     }
 

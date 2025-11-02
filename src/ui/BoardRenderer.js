@@ -413,24 +413,23 @@ export class BoardRenderer {
 
         ctx.beginPath();
 
-        // 转换第一个点为像素坐标
+        // 第一个点的处理
+        let startIndex = 0;
         let start;
-        if (segment[0].isEdge) {
-          // 边缘点:需要根据下一个点的方向调整位置
+
+        if (segment[0].isEdge && segment.length > 1) {
+          // 如果第一个点是边缘点,计算边缘位置作为起点
           start = this.getEdgePixel(segment[0], segment[1]);
+          startIndex = 1; // 从第二个点开始绘制
         } else {
           start = boardToPixel(segment[0].col, segment[0].row);
+          startIndex = 1;
         }
         ctx.moveTo(start.x, start.y);
 
         // 绘制路径
-        for (let i = 1; i < segment.length; i++) {
-          let point;
-          if (segment[i].isEdge && i + 1 < segment.length) {
-            point = this.getEdgePixel(segment[i], segment[i + 1]);
-          } else {
-            point = boardToPixel(segment[i].col, segment[i].row);
-          }
+        for (let i = startIndex; i < segment.length; i++) {
+          const point = boardToPixel(segment[i].col, segment[i].row);
           ctx.lineTo(point.x, point.y);
         }
 
@@ -451,29 +450,28 @@ export class BoardRenderer {
   /**
    * 计算边缘点的像素坐标
    * @private
-   * @param {Object} edgeCell - 边缘点所在格子
-   * @param {Object} nextCell - 下一个格子
+   * @param {Object} prevCell - 前一个格子(跳台后第一格)
+   * @param {Object} nextCell - 下一个格子(跳台后第二格)
    * @returns {Object} {x, y} 像素坐标
    */
-  getEdgePixel(edgeCell, nextCell) {
+  getEdgePixel(prevCell, nextCell) {
     const cellSize = this.cellSize;
 
-    // 计算边缘点在两个格子之间的边缘
-    // edgeCell是跳台后第一格, nextCell是第二格
+    // 计算边缘点:在prevCell和nextCell之间的边缘
+    // 即从prevCell朝向nextCell方向的边界
 
-    // 先获取两个格子的中心点
-    const edgeCenter = boardToPixel(edgeCell.col, edgeCell.row);
+    // 先获取nextCell的中心点
     const nextCenter = boardToPixel(nextCell.col, nextCell.row);
 
-    // 计算方向
-    const dx = nextCenter.x - edgeCenter.x;
-    const dy = nextCenter.y - edgeCenter.y;
+    // 计算从prevCell到nextCell的方向
+    const dx = nextCell.col - prevCell.col;
+    const dy = nextCell.row - prevCell.row;
 
-    // 边缘点在edgeCell朝向nextCell的那一侧边缘
-    // 即edgeCell中心点 + 半个格子大小
+    // 边缘点 = nextCell中心点 - 半个格子大小(反向)
+    // 即nextCell靠近prevCell的那一侧边缘
     return {
-      x: edgeCenter.x + Math.sign(dx) * cellSize / 2,
-      y: edgeCenter.y + Math.sign(dy) * cellSize / 2
+      x: nextCenter.x - Math.sign(dx) * cellSize / 2,
+      y: nextCenter.y - Math.sign(dy) * cellSize / 2
     };
   }
 

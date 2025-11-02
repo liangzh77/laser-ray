@@ -43,6 +43,13 @@ export class UIController {
     if (this.selectedPiece && this.validMoves.length > 0) {
       this.boardRenderer.highlightCells(this.validMoves, 'rgba(0, 255, 0, 0.3)');
     }
+
+    // 如果有选中的棋子，显示旋转按钮
+    if (this.selectedPiece) {
+      this.boardRenderer.drawRotationButtons(this.selectedPiece);
+    } else {
+      this.boardRenderer.clearRotationButtons();
+    }
   }
 
   /**
@@ -119,6 +126,43 @@ export class UIController {
       this.gameEngine.endTurn();
     } else {
       console.log('移动失败:', result.reason);
+    }
+  }
+
+  /**
+   * 处理旋转按钮点击
+   * @param {string} rotationType - 'left' | 'right' | 'back'
+   */
+  handleRotationButtonClick(rotationType) {
+    if (!this.selectedPiece) return;
+
+    // 根据旋转类型计算新方向
+    let newDirection;
+    const currentDirection = this.selectedPiece.direction;
+
+    if (rotationType === 'left') {
+      // 左转90度（逆时针）
+      const leftMap = { 'up': 'left', 'left': 'down', 'down': 'right', 'right': 'up' };
+      newDirection = leftMap[currentDirection];
+    } else if (rotationType === 'right') {
+      // 右转90度（顺时针）
+      const rightMap = { 'up': 'right', 'right': 'down', 'down': 'left', 'left': 'up' };
+      newDirection = rightMap[currentDirection];
+    } else if (rotationType === 'back') {
+      // 后转180度
+      const backMap = { 'up': 'down', 'down': 'up', 'left': 'right', 'right': 'left' };
+      newDirection = backMap[currentDirection];
+    }
+
+    if (newDirection) {
+      const result = this.gameEngine.rotatePiece(this.selectedPiece.position, newDirection);
+      if (result.success) {
+        this.render();
+        // 旋转成功后自动结束回合
+        this.gameEngine.endTurn();
+      } else {
+        console.log('旋转失败:', result.reason);
+      }
     }
   }
 

@@ -723,4 +723,126 @@ export class BoardRenderer {
 
     ctx.restore();
   }
+
+  /**
+   * 绘制旋转按钮
+   * @param {Object} piece - 选中的棋子
+   * @param {Function} onRotate - 旋转回调函数 (rotationType) => {}
+   */
+  drawRotationButtons(piece, onRotate) {
+    if (!piece) return;
+
+    const { ctx, cellSize } = this;
+    const centerX = piece.position.col * cellSize + cellSize / 2;
+    const centerY = piece.position.row * cellSize + cellSize / 2;
+
+    // 根据棋子朝向计算三个按钮的位置
+    // 左转90°按钮：在棋子朝向的左侧
+    // 右转90°按钮：在棋子朝向的右侧
+    // 后转180°按钮：在棋子朝向的后方
+
+    const buttonRadius = 15;
+    const buttonDistance = 35;
+
+    const directionMap = {
+      'up': { left: { dx: -buttonDistance, dy: 0 }, right: { dx: buttonDistance, dy: 0 }, back: { dx: 0, dy: buttonDistance } },
+      'down': { left: { dx: buttonDistance, dy: 0 }, right: { dx: -buttonDistance, dy: 0 }, back: { dx: 0, dy: -buttonDistance } },
+      'left': { left: { dx: 0, dy: buttonDistance }, right: { dx: 0, dy: -buttonDistance }, back: { dx: buttonDistance, dy: 0 } },
+      'right': { left: { dx: 0, dy: -buttonDistance }, right: { dx: 0, dy: buttonDistance }, back: { dx: -buttonDistance, dy: 0 } }
+    };
+
+    const positions = directionMap[piece.direction];
+    if (!positions) return;
+
+    // 存储按钮信息供点击检测使用
+    this.rotationButtons = [
+      { type: 'left', x: centerX + positions.left.dx, y: centerY + positions.left.dy, radius: buttonRadius },
+      { type: 'right', x: centerX + positions.right.dx, y: centerY + positions.right.dy, radius: buttonRadius },
+      { type: 'back', x: centerX + positions.back.dx, y: centerY + positions.back.dy, radius: buttonRadius }
+    ];
+
+    // 绘制按钮
+    this.rotationButtons.forEach(button => {
+      ctx.save();
+
+      // 绘制圆形按钮背景
+      ctx.fillStyle = 'rgba(100, 150, 255, 0.8)';
+      ctx.beginPath();
+      ctx.arc(button.x, button.y, button.radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 绘制边框
+      ctx.strokeStyle = 'rgba(50, 100, 200, 1)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // 绘制箭头图标
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 2;
+      ctx.translate(button.x, button.y);
+
+      if (button.type === 'left') {
+        // 逆时针箭头
+        ctx.beginPath();
+        ctx.arc(0, 0, 8, Math.PI * 0.3, Math.PI * 1.7, true);
+        ctx.moveTo(-5, -6);
+        ctx.lineTo(-8, -3);
+        ctx.lineTo(-5, 0);
+        ctx.stroke();
+      } else if (button.type === 'right') {
+        // 顺时针箭头
+        ctx.beginPath();
+        ctx.arc(0, 0, 8, Math.PI * 0.7, Math.PI * 2.3);
+        ctx.moveTo(5, -6);
+        ctx.lineTo(8, -3);
+        ctx.lineTo(5, 0);
+        ctx.stroke();
+      } else if (button.type === 'back') {
+        // 180度箭头（双箭头）
+        ctx.beginPath();
+        ctx.moveTo(-8, 0);
+        ctx.lineTo(8, 0);
+        // 左箭头
+        ctx.moveTo(-5, -3);
+        ctx.lineTo(-8, 0);
+        ctx.lineTo(-5, 3);
+        // 右箭头
+        ctx.moveTo(5, -3);
+        ctx.lineTo(8, 0);
+        ctx.lineTo(5, 3);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    });
+  }
+
+  /**
+   * 检查点击是否在旋转按钮上
+   * @param {number} x - 点击的x坐标
+   * @param {number} y - 点击的y坐标
+   * @returns {string|null} - 返回按钮类型（'left', 'right', 'back'）或null
+   */
+  checkRotationButtonClick(x, y) {
+    if (!this.rotationButtons) return null;
+
+    for (const button of this.rotationButtons) {
+      const dx = x - button.x;
+      const dy = y - button.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance <= button.radius) {
+        return button.type;
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * 清除旋转按钮
+   */
+  clearRotationButtons() {
+    this.rotationButtons = null;
+  }
 }

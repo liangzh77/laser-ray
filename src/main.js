@@ -66,6 +66,13 @@ class LaserChessApp {
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
+      // 先检查是否点击了旋转按钮
+      const rotationType = this.boardRenderer.checkRotationButtonClick(x, y);
+      if (rotationType) {
+        this.uiController.handleRotationButtonClick(rotationType);
+        return;
+      }
+
       // 转换为棋盘坐标
       const cellSize = canvas.width / 7;
       const col = Math.floor(x / cellSize);

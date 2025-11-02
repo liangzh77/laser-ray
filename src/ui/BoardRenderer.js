@@ -450,28 +450,29 @@ export class BoardRenderer {
   /**
    * 计算边缘点的像素坐标
    * @private
-   * @param {Object} prevCell - 前一个格子(跳台后第一格)
-   * @param {Object} nextCell - 下一个格子(跳台后第二格)
+   * @param {Object} edgePoint - 边缘点对象,包含当前格和下一格坐标
+   * @param {Object} nextCell - 下一个格子(如果edgePoint没有nextCol/nextRow)
    * @returns {Object} {x, y} 像素坐标
    */
-  getEdgePixel(prevCell, nextCell) {
+  getEdgePixel(edgePoint, nextCell) {
     const cellSize = this.cellSize;
 
-    // 计算边缘点:在prevCell和nextCell之间的边缘
-    // 即从prevCell朝向nextCell方向的边界
+    // 使用edgePoint中的nextCol/nextRow,或传入的nextCell
+    const nextCol = edgePoint.nextCol !== undefined ? edgePoint.nextCol : nextCell.col;
+    const nextRow = edgePoint.nextRow !== undefined ? edgePoint.nextRow : nextCell.row;
 
-    // 先获取nextCell的中心点
-    const nextCenter = boardToPixel(nextCell.col, nextCell.row);
+    // 计算边缘点:在当前格和下一格之间的边缘
+    const currentCenter = boardToPixel(edgePoint.col, edgePoint.row);
+    const nextCenter = boardToPixel(nextCol, nextRow);
 
-    // 计算从prevCell到nextCell的方向
-    const dx = nextCell.col - prevCell.col;
-    const dy = nextCell.row - prevCell.row;
+    // 计算方向
+    const dx = nextCol - edgePoint.col;
+    const dy = nextRow - edgePoint.row;
 
-    // 边缘点 = nextCell中心点 - 半个格子大小(反向)
-    // 即nextCell靠近prevCell的那一侧边缘
+    // 边缘点 = 当前格中心 + 半个格子(朝向下一格)
     return {
-      x: nextCenter.x - Math.sign(dx) * cellSize / 2,
-      y: nextCenter.y - Math.sign(dy) * cellSize / 2
+      x: currentCenter.x + Math.sign(dx) * cellSize / 2,
+      y: currentCenter.y + Math.sign(dy) * cellSize / 2
     };
   }
 
@@ -501,21 +502,21 @@ export class BoardRenderer {
           segments.push(currentSegment);
         }
 
-        // 开始新段,从边缘点开始
+        // 开始新段,从跳台后第一格开始
         currentSegment = [];
 
-        if (i + 1 < path.length) {
-          // 边缘点:使用跳台后第一格的坐标,标记为边缘
+        if (i + 1 < path.length && i + 2 < path.length) {
+          // 添加跳台后第一格作为起点,并创建到第二格的边缘点
           const edgePoint = {
             col: path[i + 1].col,
             row: path[i + 1].row,
-            isEdge: true
+            isEdge: true,  // 标记为边缘,绘制时调整到与下一格的边缘
+            nextCol: path[i + 2].col,
+            nextRow: path[i + 2].row
           };
           currentSegment.push(edgePoint);
+          // 不跳过任何点,让后续点正常添加
         }
-
-        // 跳过 i+1 (跳台后第一格),从 i+2 开始继续
-        i++; // 下次循环会是 i+2
       } else {
         // 正常添加点
         currentSegment.push(path[i]);

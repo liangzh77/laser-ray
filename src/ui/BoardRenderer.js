@@ -845,4 +845,95 @@ export class BoardRenderer {
   clearRotationButtons() {
     this.rotationButtons = null;
   }
+
+  /**
+   * 绘制销毁特效
+   * @param {Object} position - 销毁位置 { col, row }
+   */
+  drawDestructionEffect(position) {
+    const { ctx, cellSize } = this;
+    const centerX = position.col * cellSize + cellSize / 2;
+    const centerY = position.row * cellSize + cellSize / 2;
+
+    // 保存当前状态
+    ctx.save();
+
+    // 绘制爆炸效果 - 多个扩散的圆圈
+    const circles = 5;
+    const maxRadius = cellSize / 2;
+
+    for (let i = 0; i < circles; i++) {
+      const radius = (maxRadius / circles) * (i + 1);
+      const alpha = 1 - (i / circles);
+
+      // 外圈 - 橙色
+      ctx.strokeStyle = `rgba(255, 165, 0, ${alpha * 0.8})`;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // 内圈 - 红色
+      if (i < 3) {
+        ctx.fillStyle = `rgba(255, 0, 0, ${alpha * 0.5})`;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius * 0.7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // 绘制碎片效果
+    const fragments = 8;
+    for (let i = 0; i < fragments; i++) {
+      const angle = (Math.PI * 2 / fragments) * i;
+      const distance = maxRadius * 0.8;
+      const x = centerX + Math.cos(angle) * distance;
+      const y = centerY + Math.sin(angle) * distance;
+
+      ctx.fillStyle = 'rgba(255, 100, 0, 0.8)';
+      ctx.beginPath();
+      ctx.arc(x, y, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
+  /**
+   * 绘制选中棋子的光晕效果
+   * @param {Object} piece - 选中的棋子
+   */
+  drawSelectionGlow(piece) {
+    if (!piece) return;
+
+    const { ctx, cellSize } = this;
+    const centerX = piece.position.col * cellSize + cellSize / 2;
+    const centerY = piece.position.row * cellSize + cellSize / 2;
+
+    ctx.save();
+
+    // 绘制多层扩散光晕
+    const glowLayers = 3;
+    const maxRadius = cellSize * 0.6;
+
+    for (let i = glowLayers; i > 0; i--) {
+      const radius = (maxRadius / glowLayers) * i;
+      const alpha = (0.3 / glowLayers) * (glowLayers - i + 1);
+
+      const gradient = ctx.createRadialGradient(
+        centerX, centerY, 0,
+        centerX, centerY, radius
+      );
+
+      gradient.addColorStop(0, `rgba(255, 255, 100, ${alpha})`);
+      gradient.addColorStop(1, `rgba(255, 255, 100, 0)`);
+
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
 }

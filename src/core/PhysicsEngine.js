@@ -89,6 +89,12 @@ export class PhysicsEngine {
    * @private
    */
   handleLaserInteraction(laser, piece, laserBeam) {
+    // 检查是否是己方棋子（炮塔除外）
+    if (laser.owner === piece.owner && piece.type !== 'turret') {
+      // 己方棋子不受激光影响，激光穿透
+      return;
+    }
+
     // 调用棋子的交互处理方法
     const result = piece.handleLaserInteraction(laser.direction);
 
@@ -113,7 +119,8 @@ export class PhysicsEngine {
       this.game.board.removePiece(piece.position);
       emit(GAME_EVENTS.PIECE_DESTROYED, {
         piece: piece.toJSON(),
-        reason: 'laser_hit'
+        reason: 'laser_hit',
+        position: piece.position
       });
 
       // 如果是炮塔被摧毁，游戏结束

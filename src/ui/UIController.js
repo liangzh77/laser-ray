@@ -29,7 +29,7 @@ export class UIController {
     on(GAME_EVENTS.GAME_ENDED, (data) => this.onGameEnded(data));
     on(GAME_EVENTS.PIECE_MOVED, () => this.render());
     on(GAME_EVENTS.PIECE_ROTATED, () => this.render());
-    on(GAME_EVENTS.PIECE_DESTROYED, () => this.render());
+    on(GAME_EVENTS.PIECE_DESTROYED, (data) => this.onPieceDestroyed(data));
     on(GAME_EVENTS.TURN_STARTED, (data) => this.onTurnStarted(data));
   }
 
@@ -38,6 +38,11 @@ export class UIController {
    */
   render() {
     this.boardRenderer.render(this.gameEngine.game.board);
+
+    // 如果有选中的棋子，绘制选中光晕
+    if (this.selectedPiece) {
+      this.boardRenderer.drawSelectionGlow(this.selectedPiece);
+    }
 
     // 如果有选中的棋子，高亮可移动位置
     if (this.selectedPiece && this.validMoves.length > 0) {
@@ -58,14 +63,18 @@ export class UIController {
    */
   handleBoardClick(position) {
     const piece = this.gameEngine.game.board.getPieceAt(position);
+    const currentPlayer = this.gameEngine.game.getCurrentPlayer();
 
     if (this.selectedPiece) {
       // 已有选中的棋子
       if (piece && piece.id === this.selectedPiece.id) {
         // 点击相同棋子 -> 取消选中
         this.deselectPiece();
+      } else if (piece && piece.owner === currentPlayer.id) {
+        // 点击己方其他棋子 -> 切换选中
+        this.selectPiece(piece);
       } else {
-        // 尝试移动到新位置
+        // 点击空格或对方棋子 -> 尝试移动到新位置
         this.attemptMove(position);
       }
     } else {
@@ -157,8 +166,8 @@ export class UIController {
     if (newDirection) {
       const result = this.gameEngine.rotatePiece(this.selectedPiece.position, newDirection);
       if (result.success) {
-        this.render();
-        // 旋转成功后自动结束回合
+        // 旋转成功后取消选中并结束回合
+        this.deselectPiece();
         this.gameEngine.endTurn();
       } else {
         console.log('旋转失败:', result.reason);
@@ -182,6 +191,25 @@ export class UIController {
   onGameEnded(data) {
     const winner = data.winner === 'white' ? '白方' : '黑方';
     this.updateStatus(`游戏结束！${winner}获胜 - ${data.reason}`);
+  }
+
+  /**
+   * 棋子销毁事件处理
+   * @private
+   */
+  onPieceDestroyed(data) {
+    // 先渲染棋盘（不包含被销毁的棋子）
+    this.render();
+
+    // 在销毁位置绘制特效
+    if (data.position) {
+      this.boardRenderer.drawDestructionEffect(data.position);
+    }
+
+    // 延迟后清除特效并重新渲染
+    setTimeout(() => {
+      this.render();
+    }, 500);
   }
 
   /**

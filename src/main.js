@@ -20,7 +20,7 @@ class LaserChessApp {
     this.animationEngine = null;
 
     this.currentScreen = 'main-menu';
-    this.selectedGameMode = null;
+    this.selectedGameMode = '10+0'; // 默认选择快速对局
 
     this.init();
   }
@@ -28,6 +28,8 @@ class LaserChessApp {
   init() {
     this.bindMenuEvents();
     this.showScreen('main-menu');
+    // 触发默认模式选择，启用开始游戏按钮
+    this.updateStartButtonState();
   }
 
   /**
@@ -121,17 +123,30 @@ class LaserChessApp {
 
     this.selectedGameMode = mode;
 
-    // 启用开始按钮
-    const startBtn = document.getElementById('start-game-btn');
-    startBtn.disabled = false;
+    this.updateStartButtonState();
+  }
 
-    // 更新按钮文本
-    const modeNames = {
-      '10+0': '快速对局',
-      '15+10': '标准对局',
-      'unlimited': '休闲对局'
-    };
-    startBtn.textContent = `开始${modeNames[mode]}`;
+  /**
+   * 更新开始按钮状态
+   */
+  updateStartButtonState() {
+    const startBtn = document.getElementById('start-game-btn');
+    if (!startBtn) return;
+
+    if (this.selectedGameMode) {
+      startBtn.disabled = false;
+
+      // 更新按钮文本
+      const modeNames = {
+        '10+0': '快速对局',
+        '15+10': '标准对局',
+        'unlimited': '休闲对局'
+      };
+      startBtn.textContent = `开始${modeNames[this.selectedGameMode]}`;
+    } else {
+      startBtn.disabled = true;
+      startBtn.textContent = '开始游戏';
+    }
   }
 
   /**

@@ -455,25 +455,9 @@ export class BoardRenderer {
    * @returns {Object} {x, y} 像素坐标
    */
   getEdgePixel(edgePoint, nextCell) {
-    const cellSize = this.cellSize;
-
-    // 使用edgePoint中的nextCol/nextRow,或传入的nextCell
-    const nextCol = edgePoint.nextCol !== undefined ? edgePoint.nextCol : nextCell.col;
-    const nextRow = edgePoint.nextRow !== undefined ? edgePoint.nextRow : nextCell.row;
-
-    // 计算边缘点:在当前格和下一格之间的边缘
-    const currentCenter = boardToPixel(edgePoint.col, edgePoint.row);
-    const nextCenter = boardToPixel(nextCol, nextRow);
-
-    // 计算方向
-    const dx = nextCol - edgePoint.col;
-    const dy = nextRow - edgePoint.row;
-
-    // 边缘点 = 当前格中心 + 半个格子(朝向下一格)
-    return {
-      x: currentCenter.x + Math.sign(dx) * cellSize / 2,
-      y: currentCenter.y + Math.sign(dy) * cellSize / 2
-    };
+    // 边缘点就是当前格的中心
+    // 即跳台后第一格的中心位置
+    return boardToPixel(edgePoint.col, edgePoint.row);
   }
 
   /**

@@ -414,12 +414,23 @@ export class BoardRenderer {
         ctx.beginPath();
 
         // 转换第一个点为像素坐标
-        const start = boardToPixel(segment[0].col, segment[0].row);
+        let start;
+        if (segment[0].isEdge) {
+          // 边缘点:需要根据下一个点的方向调整位置
+          start = this.getEdgePixel(segment[0], segment[1]);
+        } else {
+          start = boardToPixel(segment[0].col, segment[0].row);
+        }
         ctx.moveTo(start.x, start.y);
 
         // 绘制路径
         for (let i = 1; i < segment.length; i++) {
-          const point = boardToPixel(segment[i].col, segment[i].row);
+          let point;
+          if (segment[i].isEdge && i + 1 < segment.length) {
+            point = this.getEdgePixel(segment[i], segment[i + 1]);
+          } else {
+            point = boardToPixel(segment[i].col, segment[i].row);
+          }
           ctx.lineTo(point.x, point.y);
         }
 
@@ -438,11 +449,40 @@ export class BoardRenderer {
   }
 
   /**
+   * 计算边缘点的像素坐标
+   * @private
+   * @param {Object} edgeCell - 边缘点所在格子
+   * @param {Object} nextCell - 下一个格子
+   * @returns {Object} {x, y} 像素坐标
+   */
+  getEdgePixel(edgeCell, nextCell) {
+    const cellSize = this.cellSize;
+
+    // 计算边缘点在两个格子之间的边缘
+    // edgeCell是跳台后第一格, nextCell是第二格
+
+    // 先获取两个格子的中心点
+    const edgeCenter = boardToPixel(edgeCell.col, edgeCell.row);
+    const nextCenter = boardToPixel(nextCell.col, nextCell.row);
+
+    // 计算方向
+    const dx = nextCenter.x - edgeCenter.x;
+    const dy = nextCenter.y - edgeCenter.y;
+
+    // 边缘点在edgeCell朝向nextCell的那一侧边缘
+    // 即edgeCell中心点 + 半个格子大小
+    return {
+      x: edgeCenter.x + Math.sign(dx) * cellSize / 2,
+      y: edgeCenter.y + Math.sign(dy) * cellSize / 2
+    };
+  }
+
+  /**
    * 将激光路径在跳跃点处分段
    * @private
    * @param {Array} path - 完整路径
    * @param {Array} jumpPoints - 跳跃点索引数组
-   * @returns {Array<Array>} 分段后的路径数组
+   * @returns {Array<Array>} 分段后的路径数组,包含边缘点标记
    */
   splitPathAtJumps(path, jumpPoints) {
     if (jumpPoints.length === 0) {
@@ -460,9 +500,24 @@ export class BoardRenderer {
         if (currentSegment.length > 0) {
           segments.push(currentSegment);
         }
-        // 从下一个点开始新段(跳过跳跃点的下一个位置)
+
+        // 新段从跳跃后位置(i+2)开始
+        // 但需要添加一个边缘点:跳台后第一格和第二格之间
         currentSegment = [];
-        i++; // 跳过下一个点(跳台后的那一格)
+
+        // 跳过下一个点(i+1是跳台后第一格,被跳过)
+        // 从i+2开始是跳台后第二格
+        if (i + 2 < path.length) {
+          // 计算边缘点:在path[i+1]和path[i+2]之间
+          const edgePoint = {
+            col: path[i + 1].col,
+            row: path[i + 1].row,
+            isEdge: true  // 标记为边缘点
+          };
+          currentSegment.push(edgePoint);
+        }
+
+        i++; // 跳过i+1(跳台后的那一格)
       }
     }
 

@@ -89,14 +89,19 @@ export class PhysicsEngine {
    * @private
    */
   handleLaserInteraction(laser, piece, laserBeam) {
+    // 调试信息
+    console.log(`激光交互: 激光所有者=${laser.owner}, 棋子=${piece.type}, 棋子所有者=${piece.owner}, 位置=(${piece.position.col},${piece.position.row})`);
+
     // 检查是否是己方棋子（炮塔除外）
     if (laser.owner === piece.owner && piece.type !== 'turret') {
+      console.log(`  → 己方棋子，激光穿透`);
       // 己方棋子不受激光影响，激光穿透
       return;
     }
 
     // 调用棋子的交互处理方法
     const result = piece.handleLaserInteraction(laser.direction);
+    console.log(`  → 交互结果:`, result);
 
     // 记录交互
     laser.addInteraction({

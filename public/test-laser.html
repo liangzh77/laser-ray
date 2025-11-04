@@ -115,6 +115,7 @@
 
             <div style="display: flex; gap: 10px; margin-top: 15px;">
                 <button class="test-btn" onclick="fireLaser()" style="background: #e74c3c;">🔥 发射激光</button>
+                <button class="test-btn" id="toggle-turret-owner" onclick="toggleTurretOwner()" style="background: #9b59b6;">切换炮台: <span id="turret-owner-text">白方</span></button>
                 <button class="test-btn" onclick="reset()" style="background: #95a5a6;">重置</button>
             </div>
         </div>
@@ -143,6 +144,7 @@
         const boardRenderer = new BoardRenderer(canvas);
         let gameEngine = null;
         let currentTestBoard = null;
+        let turretOwner = 'white'; // 炮台所有者，默认为白方
 
         window.testLog = function(message) {
             const log = document.getElementById('test-log');
@@ -178,9 +180,9 @@
             currentTestBoard = new Board();
             currentTestBoard.clear();
 
-            // 固定：白方炮塔在顶部中央 (d1)，朝下发射
+            // 炮塔在顶部中央 (d1)，朝下发射（所有者根据当前设置）
             const turret = new Turret({
-                owner: 'white',
+                owner: turretOwner,
                 position: {col: 3, row: 0},
                 direction: GAME_CONFIG.DIRECTIONS.DOWN
             });
@@ -254,8 +256,9 @@
             }
             document.getElementById('expected-result').textContent = expectedResult;
 
+            const ownerText = turretOwner === 'white' ? '白方' : '黑方';
             testLog(`设置完成: ${pieceNames[pieceType]} ${dirNames[direction]}`);
-            testLog(`炮塔: 顶部中央 (d1)，朝下 ↓`);
+            testLog(`炮塔: ${ownerText}, 顶部中央 (d1)，朝下 ↓`);
             testLog(`目标: 中央 (d4)，${dirNames[direction]}`);
             testLog(`预期结果: ${expectedResult}`);
             testLog('---');
@@ -273,6 +276,11 @@
             gameEngine = new GameEngine({ timeMode: 'unlimited' });
             gameEngine.game.board = currentTestBoard;
             gameEngine.startGame(); // 启动游戏，使状态变为 playing
+
+            // 如果炮塔是黑方，需要切换到黑方回合
+            if (turretOwner === 'black') {
+                gameEngine.game.switchTurn();
+            }
 
             const result = gameEngine.fireLaser();
 
@@ -322,6 +330,23 @@
             document.getElementById('expected-result').textContent = '-';
         };
 
+        // 切换炮台所有者
+        window.toggleTurretOwner = function() {
+            turretOwner = turretOwner === 'white' ? 'black' : 'white';
+            const ownerText = turretOwner === 'white' ? '白方' : '黑方';
+            document.getElementById('turret-owner-text').textContent = ownerText;
+            testLog(`切换炮台所有者为: ${ownerText}`);
+
+            // 如果有当前测试棋盘，更新炮台所有者并重新渲染
+            if (currentTestBoard) {
+                const turretPiece = currentTestBoard.getPieceAt({col: 3, row: 0});
+                if (turretPiece && turretPiece.type === 'turret') {
+                    turretPiece.owner = turretOwner;
+                    boardRenderer.render(currentTestBoard);
+                    testLog(`炮台颜色已更新为${ownerText}`);
+                }
+            }
+        };
 
         // 初始化显示
         reset();

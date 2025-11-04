@@ -92,16 +92,22 @@ export class PhysicsEngine {
     // 调试信息
     console.log(`激光交互: 激光所有者=${laser.owner}, 棋子=${piece.type}, 棋子所有者=${piece.owner}, 位置=(${piece.position.col},${piece.position.row})`);
 
-    // 检查是否是己方棋子（炮塔除外）
-    if (laser.owner === piece.owner && piece.type !== 'turret') {
-      console.log(`  → 己方棋子，激光穿透`);
-      // 己方棋子不受激光影响，激光穿透
-      return;
-    }
-
     // 调用棋子的交互处理方法
     const result = piece.handleLaserInteraction(laser.direction);
     console.log(`  → 交互结果:`, result);
+
+    // 友军保护机制：己方棋子(炮塔除外)不会被摧毁,但可以产生效果(反射/阻挡/分光/跳跃)
+    if (laser.owner === piece.owner && piece.type !== 'turret') {
+      // 如果会被摧毁(destroyed=true)或穿透(penetrated=true)，说明不起作用，激光穿透
+      if (result.destroyed || result.penetrated) {
+        console.log(`  → 己方棋子，不起作用，激光穿透`);
+        return; // 穿透，不摧毁，不阻挡
+      }
+      // 否则起作用了(反射/阻挡/分光/跳跃)，但不会被摧毁
+      console.log(`  → 己方棋子，起作用(反射/阻挡/分光/跳跃)，但不会被摧毁`);
+      // 继续处理，但跳过摧毁逻辑
+      result.destroyed = false; // 强制设置为不摧毁
+    }
 
     // 记录交互
     laser.addInteraction({
@@ -154,6 +160,13 @@ export class PhysicsEngine {
       // 移动到跳跃后的位置
       laser.moveTo(result.newPosition);
       laser.changeDirection(result.newDirection);
+
+      // 检查跳跃目标位置是否有棋子
+      const targetPiece = this.game.board.getPieceAt(result.newPosition);
+      if (targetPiece) {
+        // 处理与目标位置棋子的交互
+        this.handleLaserInteraction(laser, targetPiece, laserBeam);
+      }
       return;
     }
 

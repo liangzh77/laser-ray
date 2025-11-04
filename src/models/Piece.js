@@ -145,7 +145,7 @@ export class Mirror extends Piece {
 
     if (newDirection === null) {
       // 无效反射 -> 镜子摧毁,激光停止
-      this.destroy();
+      // 不在这里调用destroy(),让PhysicsEngine决定
       return {
         destroyed: true,
         blocked: false,
@@ -176,11 +176,21 @@ export class Shield extends Piece {
     const result = calculateShieldInteraction(laserDirection, this.direction);
 
     if (result.destroyed) {
-      this.destroy();
+      // 不在这里调用destroy(),让PhysicsEngine决定
       return {
         destroyed: true,
         blocked: false,
         laserStopped: true
+      };
+    }
+
+    // 背面穿透
+    if (result.penetrated) {
+      return {
+        destroyed: false,
+        blocked: false,
+        laserStopped: false,
+        penetrated: true
       };
     }
 
@@ -203,7 +213,7 @@ export class Turret extends Piece {
 
   handleLaserInteraction(laserDirection) {
     // 炮塔从任意方向被击中都会摧毁
-    this.destroy();
+    // 不在这里调用destroy(),让PhysicsEngine决定
     return {
       destroyed: true,
       blocked: false,
@@ -236,7 +246,7 @@ export class Jumper extends Piece {
     const result = calculateJump(this.position, laserDirection, this.direction);
 
     if (result.destroyed) {
-      this.destroy();
+      // 不在这里调用destroy(),让PhysicsEngine决定
       return {
         destroyed: true,
         blocked: false,
@@ -268,7 +278,7 @@ export class Splitter extends Piece {
 
     if (newDirections === null) {
       // 从背面入射 -> 摧毁
-      this.destroy();
+      // 不在这里调用destroy(),让PhysicsEngine决定
       return {
         destroyed: true,
         blocked: false,

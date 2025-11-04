@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分光器打击测试 - Laser Chess</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .test-container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        #game-board {
+            border: 2px solid #34495e;
+        }
+        .controls {
+            margin: 20px 0;
+        }
+        .test-btn {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .test-btn:hover {
+            background: #2980b9;
+        }
+        .log {
+            background: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🔬 分光器打击棋子测试</h1>
+            <p>测试分光后的激光能否正确打击路径上的棋子</p>
+        </div>
+
+        <div class="controls">
+            <button class="test-btn" onclick="setupTest1()">场景1: 分光器+左右镜子</button>
+            <button class="test-btn" onclick="setupTest2()">场景2: 分光器+左右盾牌</button>
+            <button class="test-btn" onclick="fireLaser()" style="background: #e74c3c;">🔥 发射激光</button>
+            <button class="test-btn" onclick="reset()" style="background: #95a5a6;">重置</button>
+        </div>
+
+        <canvas id="game-board" width="560" height="560"></canvas>
+
+        <div class="log" id="test-log">等待测试...</div>
+    </div>
+
+    <script type="module">
+        import { GameEngine } from '/src/core/GameEngine.js';
+        import { BoardRenderer } from '/src/ui/BoardRenderer.js';
+        import { Board } from '/src/models/Board.js';
+        import { Mirror, Shield, Turret, Splitter } from '/src/models/Piece.js';
+        import { GAME_CONFIG } from '/src/config/game-config.js';
+
+        const canvas = document.getElementById('game-board');
+        const boardRenderer = new BoardRenderer(canvas);
+        let gameEngine = null;
+        let currentTestBoard = null;
+
+        function testLog(message) {
+            const log = document.getElementById('test-log');
+            const time = new Date().toLocaleTimeString();
+            log.innerHTML += `[${time}] ${message}<br>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // 场景1: 分光器朝上，左右各一个镜子(朝上)
+        window.setupTest1 = function() {
+            testLog('=== 场景1: 分光器 + 左右镜子 ===');
+
+            currentTestBoard = new Board();
+            currentTestBoard.clear();
+
+            // 白方炮塔在顶部中央 (d1)，朝下发射
+            const turret = new Turret({
+                owner: 'white',
+                position: {col: 3, row: 0},
+                direction: GAME_CONFIG.DIRECTIONS.DOWN
+            });
+            currentTestBoard.placePiece(turret, {col: 3, row: 0});
+
+            // 黑方分光器在中央 (d4)，朝上
+            const splitter = new Splitter({
+                owner: 'black',
+                position: {col: 3, row: 3},
+                direction: GAME_CONFIG.DIRECTIONS.UP
+            });
+            currentTestBoard.placePiece(splitter, {col: 3, row: 3});
+
+            // 黑方镜子在分光器左侧 (c4)，朝上
+            const mirrorLeft = new Mirror({
+                owner: 'black',
+                position: {col: 2, row: 3},
+                direction: GAME_CONFIG.DIRECTIONS.UP
+            });
+            currentTestBoard.placePiece(mirrorLeft, {col: 2, row: 3});
+
+            // 黑方镜子在分光器右侧 (e4)，朝上
+            const mirrorRight = new Mirror({
+                owner: 'black',
+                position: {col: 4, row: 3},
+                direction: GAME_CONFIG.DIRECTIONS.UP
+            });
+            currentTestBoard.placePiece(mirrorRight, {col: 4, row: 3});
+
+            boardRenderer.render(currentTestBoard);
+
+            testLog('炮塔: (d1) 朝下 ↓');
+            testLog('分光器: (d4) 朝上 ↑');
+            testLog('镜子(左): (c4) 朝上 ↑');
+            testLog('镜子(右): (e4) 朝上 ↑');
+            testLog('预期: 激光从d1向下→碰到d4分光器→分成左右两束→分别打到c4和e4的镜子');
+            testLog('---');
+        };
+
+        // 场景2: 分光器朝上，左右各一个盾牌(朝内)
+        window.setupTest2 = function() {
+            testLog('=== 场景2: 分光器 + 左右盾牌 ===');
+
+            currentTestBoard = new Board();
+            currentTestBoard.clear();
+
+            // 白方炮塔在顶部中央 (d1)，朝下发射
+            const turret = new Turret({
+                owner: 'white',
+                position: {col: 3, row: 0},
+                direction: GAME_CONFIG.DIRECTIONS.DOWN
+            });
+            currentTestBoard.placePiece(turret, {col: 3, row: 0});
+
+            // 黑方分光器在中央 (d4)，朝上
+            const splitter = new Splitter({
+                owner: 'black',
+                position: {col: 3, row: 3},
+                direction: GAME_CONFIG.DIRECTIONS.UP
+            });
+            currentTestBoard.placePiece(splitter, {col: 3, row: 3});
+
+            // 黑方盾牌在分光器左侧 (c4)，朝右(阻挡从左来的激光)
+            const shieldLeft = new Shield({
+                owner: 'black',
+                position: {col: 2, row: 3},
+                direction: GAME_CONFIG.DIRECTIONS.RIGHT
+            });
+            currentTestBoard.placePiece(shieldLeft, {col: 2, row: 3});
+
+            // 黑方盾牌在分光器右侧 (e4)，朝左(阻挡从右来的激光)
+            const shieldRight = new Shield({
+                owner: 'black',
+                position: {col: 4, row: 3},
+                direction: GAME_CONFIG.DIRECTIONS.LEFT
+            });
+            currentTestBoard.placePiece(shieldRight, {col: 4, row: 3});
+
+            boardRenderer.render(currentTestBoard);
+
+            testLog('炮塔: (d1) 朝下 ↓');
+            testLog('分光器: (d4) 朝上 ↑');
+            testLog('盾牌(左): (c4) 朝右 →');
+            testLog('盾牌(右): (e4) 朝左 ←');
+            testLog('预期: 激光分光后→左边激光被左盾牌阻挡，右边激光被右盾牌阻挡');
+            testLog('---');
+        };
+
+        window.fireLaser = function() {
+            if (!currentTestBoard) {
+                testLog('❌ 错误: 请先选择一个测试场景');
+                return;
+            }
+
+            testLog('🔥 发射激光...');
+
+            // 创建临时游戏引擎
+            gameEngine = new GameEngine({ timeMode: 'unlimited' });
+            gameEngine.game.board = currentTestBoard;
+            gameEngine.startGame();
+
+            const result = gameEngine.fireLaser();
+
+            if (result.success) {
+                testLog('✅ 激光发射成功');
+
+                // 显示激光动画
+                boardRenderer.render(currentTestBoard);
+                boardRenderer.drawLaser(result.laserBeam, {
+                    color: 'rgba(255, 50, 50, 0.9)',
+                    width: 4,
+                    glowIntensity: 0.8
+                });
+
+                // 输出激光详细信息
+                const allLasers = result.laserBeam.getAllLasers();
+                testLog(`总激光数: ${allLasers.length}`);
+                allLasers.forEach((laser, index) => {
+                    testLog(`激光${index + 1}: source=${laser.source}, path长度=${laser.path.length}, 激活=${laser.isActive}`);
+                    if (laser.interactions.length > 0) {
+                        laser.interactions.forEach(interaction => {
+                            testLog(`  → 交互: ${interaction.pieceType} at (${interaction.position.col},${interaction.position.row}), destroyed=${interaction.result.destroyed}`);
+                        });
+                    }
+                });
+
+                setTimeout(() => {
+                    boardRenderer.render(currentTestBoard);
+                    testLog('激光动画结束');
+
+                    // 检查棋子状态
+                    const allPieces = currentTestBoard.getAllPieces();
+                    testLog('=== 棋盘状态 ===');
+                    allPieces.forEach(piece => {
+                        const status = piece.isDestroyed ? '💥 已摧毁' : '✅ 存活';
+                        testLog(`${piece.type} at (${piece.position.col},${piece.position.row}): ${status}`);
+                    });
+
+                    if (result.gameOver) {
+                        testLog('🎮 游戏结束: ' + result.gameOverResult.reason);
+                    }
+                }, 1500);
+            } else {
+                testLog('❌ 激光发射失败: ' + result.reason);
+            }
+        };
+
+        window.reset = function() {
+            currentTestBoard = null;
+            boardRenderer.clearCanvas();
+            boardRenderer.drawGrid();
+            document.getElementById('test-log').innerHTML = '重置完成，等待测试...<br>';
+        };
+
+        // 添加点击旋转功能
+        canvas.addEventListener('click', (e) => {
+            if (!currentTestBoard) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // 转换为棋盘坐标
+            const cellSize = GAME_CONFIG.BOARD.CELL_SIZE;
+            const col = Math.floor(x / cellSize);
+            const row = Math.floor(y / cellSize);
+
+            // 检查该位置是否有棋子
+            const piece = currentTestBoard.getPieceAt({ col, row });
+            if (piece) {
+                // 旋转棋子（顺时针90度）
+                piece.rotateClockwise();
+
+                // 重新渲染
+                boardRenderer.render(currentTestBoard);
+
+                const dirNames = {
+                    'up': '↑',
+                    'down': '↓',
+                    'left': '←',
+                    'right': '→'
+                };
+                testLog(`旋转 ${piece.type} at (${col},${row}) → 现在朝向: ${dirNames[piece.direction]}`);
+            }
+        });
+
+        // 初始化
+        reset();
+        testLog('分光器打击测试工具已就绪');
+        testLog('选择一个测试场景，然后点击"发射激光"按钮');
+        testLog('💡 提示: 点击任意棋子可以旋转它（顺时针90度）');
+    </script>
+</body>
+</html>

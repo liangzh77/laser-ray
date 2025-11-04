@@ -211,18 +211,19 @@ export function calculateReflection(incomingDirection, mirrorOrientation) {
  * 计算激光是否被盾牌阻挡
  * @param {string} incomingDirection - 入射方向
  * @param {string} shieldOrientation - 盾牌朝向
- * @returns {Object} { blocked: boolean, destroyed: boolean }
+ * @returns {Object} { blocked: boolean, destroyed: boolean, penetrated: boolean }
  */
 export function calculateShieldInteraction(incomingDirection, shieldOrientation) {
   const oppositeDir = getOppositeDirection(shieldOrientation);
 
-  // 从正面或背面入射 -> 阻挡
+  // 盾牌阻挡与其朝向同轴的激光（正面或背面）
+  // 例：盾牌朝上/下 -> 阻挡上下方向的激光；盾牌朝左/右 -> 阻挡左右方向的激光
   if (incomingDirection === shieldOrientation || incomingDirection === oppositeDir) {
-    return { blocked: true, destroyed: false };
+    return { blocked: true, destroyed: false, penetrated: false };
   }
 
-  // 从侧面入射 -> 盾牌摧毁
-  return { blocked: false, destroyed: true };
+  // 从侧面入射（垂直于盾牌朝向）-> 盾牌摧毁
+  return { blocked: false, destroyed: true, penetrated: false };
 }
 
 /**

@@ -1,16 +1,9 @@
 {
-  "rewrites": [
-    { "source": "/", "destination": "/public/index.html" },
-    { "source": "/index.html", "destination": "/public/index.html" },
-    { "source": "/css/(.*)", "destination": "/public/css/$1" },
-    { "source": "/js/(.*)", "destination": "/public/js/$1" },
-    { "source": "/test-laser.html", "destination": "/public/test-laser.html" },
-    { "source": "/test-laser-v2.html", "destination": "/public/test-laser-v2.html" },
-    { "source": "/test-splitter-hit.html", "destination": "/public/test-splitter-hit.html" }
-  ],
+  "buildCommand": "npm run build",
+  "outputDirectory": "public",
   "headers": [
     {
-      "source": "/src/(.*).js",
+      "source": "/src/(.*)",
       "headers": [
         {
           "key": "Content-Type",

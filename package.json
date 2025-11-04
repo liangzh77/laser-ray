@@ -5,7 +5,7 @@
   "main": "public/index.html",
   "scripts": {
     "dev": "http-server . -p 8080 -c-1 -o /public/index.html",
-    "build": "echo 'Build completed - Static files ready for deployment'",
+    "build": "node scripts/build.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:e2e": "playwright test",
